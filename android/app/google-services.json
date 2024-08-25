@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1047440375113",
+    "project_id": "weaver-hub",
+    "storage_bucket": "weaver-hub.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1047440375113:android:fe2304bb4fb976f2c2ee98",
+        "android_client_info": {
+          "package_name": "com.titi.weavershub.weavershub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWE5jMob7Pa35qQyM5O2Sq4utHfAqFUzM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
