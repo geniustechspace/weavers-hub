@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -134,12 +135,14 @@ class _CartItemCard extends StatelessWidget {
         contentPadding: const EdgeInsets.all(10),
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: Image.network(
-            item.product['image_url'],
-            width: 60,
-            height: 60,
-            fit: BoxFit.cover,
-          ),
+          child: CachedNetworkImage(
+              imageUrl:  item.product['image_url'],
+              width: 60,
+              height: 60,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              errorWidget: (context, url, error) => const Icon(Icons.error)),
+
         ),
         title: Text(item.product['name'], style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         subtitle: Column(
@@ -249,7 +252,7 @@ class _OrderSummaryDialog extends StatelessWidget {
           style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
           child: const Text('Confirm Order', style: TextStyle(color: Colors.white)),
           onPressed: () {
-            Navigator.of(context).pop();
+            // Navigator.of(context).pop();
             onConfirm();
 
           },
@@ -262,7 +265,7 @@ class _OrderSummaryDialog extends StatelessWidget {
 class _OrderSummaryItem extends StatelessWidget {
   final CartItem item;
 
-  const _OrderSummaryItem({Key? key, required this.item}) : super(key: key);
+  const _OrderSummaryItem({required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -273,12 +276,13 @@ class _OrderSummaryItem extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: Image.network(
-              item.product['image_url'],
-              width: 50,
-              height: 50,
-              fit: BoxFit.cover,
-            ),
+            child: CachedNetworkImage(
+                imageUrl: item.product['image_url'],
+                width: 50,
+                height: 50,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error)),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -333,7 +337,7 @@ class PaymentService {
       secretKey: "sk_test_6e5fea205206f0b7c76c5487102bb5a147ba54a4",
       customerEmail: email,
       reference: uniqueTransRef,
-      callbackUrl: "https://amp.amalitech-dev.net/auth/login",
+      callbackUrl: "weavers-hub",
       currency: "GHS",
       paymentChannel: ["mobile_money", "card"],
       amount: amount,
@@ -341,7 +345,6 @@ class PaymentService {
         bool isVerified = await _verifyPaymentOnServer(uniqueTransRef);
         if (isVerified) {
           onSuccess(uniqueTransRef);
-
         } else {
           onFailure();
         }
@@ -431,8 +434,6 @@ class OrderService {
           'deliveryCharge': deliveryCharge,
           'status': true,
         });
-
-
       }
     } catch (e) {
       print("Error creating order: $e");

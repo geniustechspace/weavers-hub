@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
@@ -15,11 +16,11 @@ class MarketPlace extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.gre,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.green,
         automaticallyImplyLeading: false,
-        title: const Text('All Products', style: TextStyle(color: Colors.white),),
+        title: const Text('Market Place', style: TextStyle(color: Colors.white),),
         actions: [
 
           Consumer<Cart>(
@@ -163,12 +164,13 @@ class _ProductCardState extends State<ProductCard> {
                   const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
               child: Hero(
                 tag: 'product-${widget.product.id}',
-                child: Image.network(
-                  widget.product['image_url'],
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: 200,
-                ),
+                child: CachedNetworkImage(
+                    imageUrl: widget.product['image_url'],
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: 200,
+                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => const Icon(Icons.error)),
               ),
             ),
             Container(
