@@ -37,7 +37,7 @@ class _EmptyCartView extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Center(
       child: Text(
-        'Your cart is empty',
+        'Your cart is empty!',
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey),
       ),
     );
@@ -337,7 +337,7 @@ class PaymentService {
       secretKey: "sk_test_6e5fea205206f0b7c76c5487102bb5a147ba54a4",
       customerEmail: email,
       reference: uniqueTransRef,
-      callbackUrl: "weavers-hub",
+      callbackUrl: "https://amp.amalitech-dev.net/",
       currency: "GHS",
       paymentChannel: ["mobile_money", "card"],
       amount: amount,
@@ -410,6 +410,7 @@ class OrderService {
         'itemsCount': cart.items.length,
         'orderDate': FieldValue.serverTimestamp(),
         'status': true,
+        'acceptOrder': false,
         'userId': user.uid,
       };
 
@@ -433,6 +434,7 @@ class OrderService {
           'quantity': product['quantity'],
           'deliveryCharge': deliveryCharge,
           'status': true,
+          'acceptOrder': false,
         });
       }
     } catch (e) {

@@ -7,12 +7,7 @@ import 'package:weavershub/DashBoard/Users/landing-page/product-details.dart';
 import '../users-cart/cart.dart';
 import '../users-cart/cartScreen.dart';
 
-
 class MarketPlace extends StatelessWidget {
-
-  int itemCount = 0;
-  bool _isInCart = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,51 +17,41 @@ class MarketPlace extends StatelessWidget {
         automaticallyImplyLeading: false,
         title: const Text('Market Place', style: TextStyle(color: Colors.white),),
         actions: [
-
           Consumer<Cart>(
             builder: (context, cart, child) {
               return Stack(
                 children: [
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.shopping_cart,size: 35,color: Colors.white,),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const CartScreen()),
-                          );
-                        },
+                  IconButton(
+                    icon: const Icon(Icons.shopping_cart, size: 35, color: Colors.white,),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CartScreen()),
+                      );
+                    },
+                  ),
+                  Positioned(
+                    right: 8,
+                    top: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      Positioned(
-                        right: 8,
-                        top: 8,
-                        child: Consumer<Cart>(
-                          builder: (context, cart, child) {
-                            return Container(
-                              padding: const EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                color: Colors.red,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              constraints: const BoxConstraints(
-                                minWidth: 20,
-                                minHeight: 20,
-                              ),
-                              child: Text(
-                                '${cart.itemCount}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            );
-                          },
+                      constraints: const BoxConstraints(
+                        minWidth: 20,
+                        minHeight: 20,
+                      ),
+                      child: Text(
+                        '${cart.itemCount}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                    ],
+                    ),
                   ),
                 ],
               );
@@ -74,13 +59,13 @@ class MarketPlace extends StatelessWidget {
           ),
         ],
       ),
-      body: const AllProductsList(),
+      body: const AllProductsGrid(),
     );
   }
 }
 
-class AllProductsList extends StatelessWidget {
-  const AllProductsList({super.key});
+class AllProductsGrid extends StatelessWidget {
+  const AllProductsGrid({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -102,12 +87,19 @@ class AllProductsList extends StatelessWidget {
           return const Center(child: Text('No products available.'));
         }
 
-        return ListView.builder(
+        return GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.75,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+          ),
+          padding: const EdgeInsets.all(10),
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
             var product = snapshot.data!.docs[index];
             return GestureDetector(
-              onTap: (){
+              onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -115,7 +107,8 @@ class AllProductsList extends StatelessWidget {
                   ),
                 );
               },
-                child: ProductCard(product: product));
+              child: ProductCard(product: product),
+            );
           },
         );
       },
@@ -126,7 +119,7 @@ class AllProductsList extends StatelessWidget {
 class ProductCard extends StatefulWidget {
   final QueryDocumentSnapshot product;
 
-  const ProductCard({super.key, required this.product});
+  const ProductCard({Key? key, required this.product}) : super(key: key);
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -134,7 +127,6 @@ class ProductCard extends StatefulWidget {
 
 class _ProductCardState extends State<ProductCard> {
   int _quantity = 1;
-
 
   @override
   void initState() {
@@ -151,163 +143,149 @@ class _ProductCardState extends State<ProductCard> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Card(
-        child: Column(
-          children: [
-            ClipRRect(
-              borderRadius:
-                  const BorderRadius.only(topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
               child: Hero(
                 tag: 'product-${widget.product.id}',
                 child: CachedNetworkImage(
-                    imageUrl: widget.product['image_url'],
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: 200,
-                    placeholder: (context, url) => const CircularProgressIndicator(),
-                    errorWidget: (context, url, error) => const Icon(Icons.error)),
+                  imageUrl: widget.product['image_url'],
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
               ),
             ),
-            Container(
-              decoration: const BoxDecoration(
-                  color: Colors.white,
-                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20),bottomRight: Radius.circular(20))
-              ),
-              padding: const EdgeInsets.all(10.0),
-
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Name: ${widget.product['name']}",
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          "price: ${widget.product['price']}",
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        Text(
-                          "Quantity: ${widget.product['quantity']}",
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                     ElevatedButton(
-                      onPressed:  () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              title: const Text(
-                                'Update Quantity',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                                textAlign: TextAlign.center,
-                              ),
-                              content: Container(
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: StatefulBuilder(
-                                  builder: (BuildContext context, StateSetter setState) {
-                                    return Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      children: [
-                                        IconButton(
-                                          icon: const Icon(Icons.remove_circle),
-                                          color: Colors.red,
-                                          onPressed: () {
-                                            if (_quantity > 0) {
-                                              setState(() => _quantity--);
-                                            }
-                                          },
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(10),
-                                            border: Border.all(color: Colors.grey),
-                                          ),
-                                          child: Text(
-                                            '$_quantity',
-                                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(Icons.add_circle),
-                                          color: Colors.green,
-                                          onPressed: () {
-                                            if (_quantity < widget.product['quantity']) {
-                                              setState(() => _quantity++);
-                                            }
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                ),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: const Text('Cancel', style: TextStyle(color: Colors.red)),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    iconColor: Colors.green,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                  ),
-                                  onPressed:  (){
-                                    Navigator.of(context).pop();
-                                    _addToCart();
-                                  },
-                                  child: const Text("Add to Cart"),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                      child:  const Text("Buy"),
-                    ),
-                  ]),
-            )
-          ],
-        ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.product['name'],
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  '\GHC ${widget.product['price']}',
+                  style: const TextStyle(color: Colors.green),
+                ),
+                const SizedBox(height: 5),
+                ElevatedButton(
+                  onPressed: () => _showQuantityDialog(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    minimumSize: const Size(double.infinity, 36),
+                  ),
+                  child: const Text('Buy', style: TextStyle(color: Colors.white),),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
+
+  void _showQuantityDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text(
+            'Update Quantity',
+            style: TextStyle(fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          content: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.remove_circle),
+                      color: Colors.red,
+                      onPressed: () {
+                        if (_quantity > 0) {
+                          setState(() => _quantity--);
+                        }
+                      },
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.grey),
+                      ),
+                      child: Text(
+                        '$_quantity',
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.add_circle),
+                      color: Colors.green,
+                      onPressed: () {
+                        if (_quantity < widget.product['quantity']) {
+                          setState(() => _quantity++);
+                        }
+                      },
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel', style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+
+
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                iconColor: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed:  (){
+                Navigator.of(context).pop();
+                _addToCart();
+              },
+              child: const Text("Add to Cart"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+
+
 }
