@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,7 +15,7 @@ class MyOrders extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('My Orders'),
+        title: const Text('My Orders', style: TextStyle(color: Colors.white),),
         elevation: 0,
         backgroundColor: Colors.green,
       ),
@@ -49,56 +50,100 @@ class MyOrders extends StatelessWidget {
               String timeAgo = timeago.format(dateTime, locale: 'en');
               String formattedDate = DateFormat('MMM d, y').format(dateTime);
 
-              final orderId = snapshot.data!.docs[index].id.substring(0, 8).toUpperCase();
+              final orderId = snapshot.data!.docs[index].id.substring(0, 5).toUpperCase();
 
-              return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                child: InkWell(
-                  onTap: () => _showOrderDetails(context, orderData),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Order #$orderId',
-                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                            ),
-                            _buildStatusChip(orderData['status']),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Placed $timeAgo',
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                        Text(
-                          formattedDate,
-                          style: TextStyle(color: Colors.grey[600]),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'GHC ${totalAmount.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            color: Colors.green[700],
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+               return Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: InkWell(
+                    onTap: () => _showOrderDetails(context, orderData),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Order #$orderId',
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                              ),
+                              _buildStatusChip(orderData['status']),
+                            ],
                           ),
-                        ),
-                        Text('$itemsCount ${itemsCount == 1 ? 'item' : 'items'}'),
-                      ],
+                          const SizedBox(height: 8),
+                          Text(
+                            'Placed $timeAgo',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                          Text(
+                            formattedDate,
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'GHC ${totalAmount.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              color: Colors.green[700],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('$itemsCount ${itemsCount == 1 ? 'item' : 'items'}'),
+                              Column(
+                                children: [
+                                  _buildAcceptanceStatusChip(orderData['acceptOrder'] ?? false),
+                                ],
+                              ),
+
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
+                );
             },
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildAcceptanceStatusChip(bool accepted) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: accepted ? Colors.green[100] : Colors.orange[100],
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: accepted ? Colors.green : Colors.orange,
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            accepted ? Icons.check_circle : Icons.hourglass_empty,
+            size: 10,
+            color: accepted ? Colors.green[700] : Colors.orange[700],
+          ),
+          const SizedBox(width: 4),
+          Text(
+            accepted ? 'order accepted by seller' : 'Waiting for Acceptance',
+            style: TextStyle(
+              fontSize: 10,
+              color: accepted ? Colors.green[700] : Colors.orange[700],
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -190,13 +235,10 @@ class MyOrders extends StatelessWidget {
         child: ListTile(
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: Image.network(
-              product['image_url'],
-              width: 60,
-              height: 60,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
-            ),
+            child: CachedNetworkImage(
+                imageUrl: product['image_url'],
+                placeholder: (context, url) => const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error)),
           ),
           title: Text(
             product['name'],

@@ -4,9 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class VendorOrdersPage extends StatelessWidget {
+class VendorOrdersPage extends StatefulWidget {
   const VendorOrdersPage({super.key});
 
+  @override
+  State<VendorOrdersPage> createState() => _VendorOrdersPageState();
+}
+
+class _VendorOrdersPageState extends State<VendorOrdersPage> {
+  bool? isAccepted = false;
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -15,7 +21,10 @@ class VendorOrdersPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('My Orders', style: TextStyle(color: Colors.white),),
+        title: const Text(
+          'Orders',
+          style: TextStyle(color: Colors.white),
+        ),
         elevation: 0,
         backgroundColor: Colors.green,
       ),
@@ -49,8 +58,6 @@ class VendorOrdersPage extends StatelessWidget {
               String timeAgo = timeago.format(dateTime, locale: 'en');
               String formattedDate = DateFormat('MMM d, y').format(dateTime);
 
-
-
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 elevation: 4,
@@ -79,7 +86,7 @@ class VendorOrdersPage extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Date: $formattedDate ($timeAgo))',
+                          'Date: $formattedDate ($timeAgo)',
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                         const SizedBox(height: 12),
@@ -98,7 +105,30 @@ class VendorOrdersPage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Text('Quantity: ${order["quantity"]}'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Quantity: ${order["quantity"]}'),
+                            Column(
+                              children: [
+                                Card(
+                                  elevation: 5,
+                                  surfaceTintColor: Colors.green,
+                                  child: Checkbox(
+                                    activeColor: Colors.green,
+                                    value: order['acceptOrder'] ?? false,
+                                    onChanged: (bool? value) {
+                                      _updateOrderStatus(
+                                          orderDoc.reference, value ?? false);
+                                    },
+                                  ),
+                                ),
+                                const Text("accept order",
+                                    style: TextStyle(fontSize: 10)),
+                              ],
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -109,6 +139,32 @@ class VendorOrdersPage extends StatelessWidget {
         },
       ),
     );
+  }
+
+  void _updateOrderStatus(DocumentReference orderRef, bool accepted) {
+    orderRef.update({'acceptOrder': accepted}).then((_) {
+
+      String orderId = orderRef.id;
+      FirebaseFirestore.instance
+          .collection('orders')
+          .doc(orderId)
+          .update({'acceptOrder': accepted});
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content:
+              Text(accepted ? 'Order accepted' : 'Order acceptance cancelled'),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    }).catchError((error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update order status: $error'),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    });
   }
 
   Widget _buildStatusChip(bool status) {
@@ -128,6 +184,88 @@ class VendorOrdersPage extends StatelessWidget {
     );
   }
 
+  // Widget _buildAcceptOrderCheckbox(BuildContext context, DocumentSnapshot orderDoc) {
+  //   // bool isAccepted = (orderDoc.data() as Map<String, dynamic>)['acceptOrder'] ?? false;
+  //   bool? isAccepted = false;
+  //
+  //   return Column(
+  //     children: [
+  //       Card(
+  //         elevation: 10,
+  //         surfaceTintColor: Colors.green,
+  //         child: Checkbox(
+  //           checkColor: Colors.white,
+  //           activeColor: Colors.green,
+  //           value: isAccepted,
+  //           onChanged: (bool? newValue) {
+  //            setState(() {
+  //              isAccepted = newValue ?? false;
+  //            });
+  //             // write logic here
+  //           },
+  //         ),
+  //       ),
+  //       const Text("accept order", style: TextStyle(fontSize: 10)),
+  //     ],
+  //   );
+  // }
+  // _updateOrderAcceptance(context, orderDoc, newValue ?? false);
+
+  // void _updateOrderAcceptance(BuildContext context, DocumentSnapshot orderDoc, bool newValue) async {
+  //   try {
+  //     await orderDoc.reference.update({'acceptOrder': newValue});
+  //
+  //     if (newValue) {
+  //       String customerId = (orderDoc.data() as Map<String, dynamic>)['userId'];
+  //       String orderId = orderDoc.id;
+  //       await _sendOrderAcceptedNotification(customerId, orderId);
+  //     }
+  //
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text(newValue ? 'Order accepted' : 'Order acceptance cancelled')),
+  //     );
+  //   } catch (e) {
+  //     print('Error updating order acceptance: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Failed to update order status')),
+  //     );
+  //   }
+  // }
+
+  // Future<void> _sendOrderAcceptedNotification(String customerId, String orderId) async {
+  //   try {
+  //     final userDoc = await FirebaseFirestore.instance.collection('users').doc(customerId).get();
+  //     final fcmToken = userDoc.data()?['fcmToken'];
+  //
+  //     if (fcmToken != null) {
+  //       await http.post(
+  //         Uri.parse('https://fcm.googleapis.com/fcm/send'),
+  //         headers: <String, String>{
+  //           'Content-Type': 'application/json',
+  //           // 'Authorization': 'key=YOUR_SERVER_KEY', // Replace with your actual server key
+  //         },
+  //         body: jsonEncode(
+  //           <String, dynamic>{
+  //             'notification': <String, dynamic>{
+  //               'body': 'Your order #$orderId has been accepted!',
+  //               'title': 'Order Accepted'
+  //             },
+  //             'priority': 'high',
+  //             'data': <String, dynamic>{
+  //               'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+  //               'id': '1',
+  //               'status': 'done'
+  //             },
+  //             'to': fcmToken,
+  //           },
+  //         ),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     print('Error sending notification: $e');
+  //   }
+  // }
+
   void _showOrderDetails(BuildContext context, Map<String, dynamic> order) {
     showDialog(
       context: context,
@@ -146,9 +284,12 @@ class VendorOrdersPage extends StatelessWidget {
                 _buildDetailRow('Location', order['location']),
                 _buildDetailRow('Phone', order['phone']),
                 _buildDetailRow('Email', order['email']),
-                _buildDetailRow('Status', order['status'] ? 'Completed' : 'Pending'),
+                _buildDetailRow(
+                    'Status', order['status'] ? 'Completed' : 'Pending'),
                 const SizedBox(height: 16),
-                const Text('Products:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                const Text('Products:',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                 const SizedBox(height: 8),
                 ..._buildProductList(order['products'] as List<dynamic>? ?? []),
               ],
@@ -196,7 +337,8 @@ class VendorOrdersPage extends StatelessWidget {
               width: 60,
               height: 60,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+              errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.error),
             ),
           ),
           title: Text(
@@ -206,7 +348,8 @@ class VendorOrdersPage extends StatelessWidget {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Price: GHC ${(product['price'] as num?)?.toStringAsFixed(2) ?? 'N/A'}'),
+              Text(
+                  'Price: GHC ${(product['price'] as num?)?.toStringAsFixed(2) ?? 'N/A'}'),
               Text('Quantity: ${product['quantity'] ?? 'N/A'}'),
             ],
           ),

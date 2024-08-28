@@ -70,7 +70,7 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Product created successfully!')),
       );
-      Get.back(); // Navigate back instead of using Get.offAll()
+      Get.back();
 
       _formKey.currentState!.reset();
       setState(() {
@@ -176,7 +176,6 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
                                         );
                                         return;
                                       }
-
                                       _uploadProductData(name, parsedQuantity,
                                           description, parsedPrice);
                                     }
@@ -190,7 +189,7 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
                                     ),
                                   ),
                                   child: const Text('Create Product',
-                                      style: TextStyle(fontSize: 18)),
+                                      style: TextStyle(fontSize: 18,color: Colors.white)),
                                 ),
                               ],
                             ),
@@ -278,7 +277,7 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
                       children: [
                         Icon(Icons.add_a_photo, size: 50, color: Colors.grey),
                         SizedBox(height: 10),
-                        Text('Tap to upload image',
+                        Text('Tap to upload your product image!',
                             style: TextStyle(color: Colors.grey)),
                       ],
                     ),

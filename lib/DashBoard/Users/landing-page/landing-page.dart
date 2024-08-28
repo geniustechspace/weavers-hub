@@ -15,7 +15,7 @@ class _NavigationHomeState extends State<NavigationHome> {
   int currentIndex = 0;
   List<Widget> screens = [
 
-    MarketPlace(),
+     MarketPlace(),
     const MyOrders(),
 
   ];
@@ -37,7 +37,7 @@ class _NavigationHomeState extends State<NavigationHome> {
           ],
         ),
         child: BottomNavigationBar(
-          selectedItemColor: Colors.black,
+          selectedItemColor: Colors.green,
           iconSize: 20,
           showSelectedLabels: true,
           showUnselectedLabels: true,

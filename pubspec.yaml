@@ -48,6 +48,8 @@ dependencies:
   pay_with_paystack:
   http:
   intl:
+  firebase_messaging: ^14.6.2
+  flutter_local_notifications: ^14.1.1
 
 dev_dependencies:
   flutter_test:

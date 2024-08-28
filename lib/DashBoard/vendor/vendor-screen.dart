@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:weavershub/DashBoard/vendor/product-creation.dart';
 import 'package:weavershub/DashBoard/vendor/vendor-orders-page.dart';
 import 'package:weavershub/DashBoard/vendor/vendorProductsPage.dart';
+import 'package:weavershub/DashBoard/vendor/view-accepted-orders.dart';
 
 class VendorDashboard extends StatelessWidget {
   const VendorDashboard({super.key});
@@ -81,10 +82,10 @@ class VendorDashboard extends StatelessWidget {
                           _buildActionButton('View all orders', Icons.shopping_cart, () {
                             Get.to(() => const VendorOrdersPage());
                           }),
-                          // const SizedBox(height: 16),
-                          // _buildActionButton('Attended orders', Icons.check_circle, () {
-                          //   print("View attended orders");
-                          // }),
+                          const SizedBox(height: 16),
+                          _buildActionButton('Attended orders', Icons.check_circle, () {
+                            Get.to(() => const VendorAcceptedOrdersPage());
+                          }),
                         ],
                       ),
                     ),
@@ -105,12 +106,14 @@ class VendorDashboard extends StatelessWidget {
         color: Colors.white.withOpacity(0.2),
         borderRadius: BorderRadius.circular(16),
       ),
-      child:  Text(
-        name,
-        style: const TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
+      child:  Center(
+        child: Text(
+          name,
+          style: const TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
     );
