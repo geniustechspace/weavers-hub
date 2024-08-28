@@ -19,98 +19,107 @@ class MyOrders extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.green,
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('orders')
-            .where('userId', isEqualTo: currentUser?.uid)
-            .orderBy('orderDate', descending: true)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.green[50]!, Colors.green[100]!],
+          ),
+        ),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('orders')
+              .where('userId', isEqualTo: currentUser?.uid)
+              .orderBy('orderDate', descending: true)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
 
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('No orders found'));
-          }
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return const Center(child: Text('No orders found'));
+            }
 
-          return ListView.builder(
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index) {
-              final orderData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
-              final totalAmount = orderData['totalAmount'] as double;
-              final itemsCount = orderData['itemsCount'] as int;
+            return ListView.builder(
+              itemCount: snapshot.data!.docs.length,
+              itemBuilder: (context, index) {
+                final orderData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                final totalAmount = orderData['totalAmount'] as double;
+                final itemsCount = orderData['itemsCount'] as int;
 
-              Timestamp timestamp = orderData['orderDate'] as Timestamp;
-              DateTime dateTime = timestamp.toDate();
-              String timeAgo = timeago.format(dateTime, locale: 'en');
-              String formattedDate = DateFormat('MMM d, y').format(dateTime);
+                Timestamp timestamp = orderData['orderDate'] as Timestamp;
+                DateTime dateTime = timestamp.toDate();
+                String timeAgo = timeago.format(dateTime, locale: 'en');
+                String formattedDate = DateFormat('MMM d, y').format(dateTime);
 
-              final orderId = snapshot.data!.docs[index].id.substring(0, 5).toUpperCase();
+                final orderId = snapshot.data!.docs[index].id.substring(0, 5).toUpperCase();
 
-               return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  child: InkWell(
-                    onTap: () => _showOrderDetails(context, orderData),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Order #$orderId',
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                              ),
-                              _buildStatusChip(orderData['status']),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Placed $timeAgo',
-                            style: TextStyle(color: Colors.grey[600]),
-                          ),
-                          Text(
-                            formattedDate,
-                            style: TextStyle(color: Colors.grey[600]),
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            'GHC ${totalAmount.toStringAsFixed(2)}',
-                            style: TextStyle(
-                              color: Colors.green[700],
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                 return Card(
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    child: InkWell(
+                      onTap: () => _showOrderDetails(context, orderData),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Order #$orderId',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                ),
+                                _buildStatusChip(orderData['status']),
+                              ],
                             ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('$itemsCount ${itemsCount == 1 ? 'item' : 'items'}'),
-                              Column(
-                                children: [
-                                  _buildAcceptanceStatusChip(orderData['acceptOrder'] ?? false),
-                                ],
+                            const SizedBox(height: 8),
+                            Text(
+                              'Placed $timeAgo',
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                            Text(
+                              formattedDate,
+                              style: TextStyle(color: Colors.grey[600]),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'GHC ${totalAmount.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                color: Colors.green[700],
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
                               ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('$itemsCount ${itemsCount == 1 ? 'item' : 'items'}'),
+                                Column(
+                                  children: [
+                                    _buildAcceptanceStatusChip(orderData['acceptOrder'] ?? false),
+                                  ],
+                                ),
 
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-            },
-          );
-        },
+                  );
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -166,45 +175,44 @@ class MyOrders extends StatelessWidget {
   }
 
   void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData) {
-    showDialog(
+    showModalBottomSheet(
       context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (BuildContext context) {
 
         Timestamp timestamp = orderData['orderDate'] as Timestamp;
         DateTime dateTime = timestamp.toDate();
         String timeAgo = timeago.format(dateTime, locale: 'en');
         String formattedDate = DateFormat('MMMM d, y').format(dateTime);
-        return AlertDialog(
-          title: const Text('Order Details'),
-
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildDetailRow('Date', '$formattedDate ($timeAgo)'),
-                _buildDetailRow('Total Amount', 'GHC ${orderData['totalAmount']}'),
-                _buildDetailRow('Delivery Charge', 'GHC ${orderData['deliveryCharge']}'),
-                _buildDetailRow('Items Count', '${orderData['itemsCount']}'),
-                _buildDetailRow('Customer', orderData['userName']),
-                _buildDetailRow('Location', orderData['location']),
-                _buildDetailRow('Phone', orderData['phone']),
-                _buildDetailRow('Email', orderData['email']),
-                _buildDetailRow('Status', orderData['status'] ? 'Completed' : 'Pending'),
-                const SizedBox(height: 16),
-                const Text('Products:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                const SizedBox(height: 8),
-                ..._buildProductList(orderData['products']),
-              ],
+        return  Container(
+          padding: const EdgeInsets.all(20),
+          child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text("Order Details", style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
+                  const Divider(),
+                  _buildDetailRow('Date', '$formattedDate ($timeAgo)'),
+                  _buildDetailRow('Total Amount', 'GHC ${orderData['totalAmount']}'),
+                  _buildDetailRow('Delivery Charge', 'GHC ${orderData['deliveryCharge']}'),
+                  _buildDetailRow('Items Count', '${orderData['itemsCount']}'),
+                  _buildDetailRow('Customer', orderData['userName']),
+                  _buildDetailRow('Location', orderData['location']),
+                  _buildDetailRow('Phone', orderData['phone']),
+                  _buildDetailRow('Email', orderData['email']),
+                  _buildDetailRow('Status', orderData['status'] ? 'Completed' : 'Pending'),
+                  const SizedBox(height: 16),
+                  const Text('Products:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  const SizedBox(height: 8),
+                  ..._buildProductList(orderData['products']),
+                ],
+              ),
             ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Close'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
         );
+
       },
     );
   }

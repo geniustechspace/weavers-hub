@@ -59,7 +59,15 @@ class MarketPlace extends StatelessWidget {
           ),
         ],
       ),
-      body: const AllProductsGrid(),
+      body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.green[50]!, Colors.green[100]!],
+            ),
+          ),
+          child: const AllProductsGrid()),
     );
   }
 }
