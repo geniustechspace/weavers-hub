@@ -100,117 +100,127 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.green, Colors.green, Colors.white],
-                  stops: [0.0, 0.3, 0.3],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.green[50]!, Colors.green[100]!],
+          ),
+        ),
+        child: SafeArea(
+          child: Stack(
+            children: [
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.green, Colors.green, Colors.white],
+                    stops: [0.1, 0.3, 0.3],
+                  ),
                 ),
-              ),
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 20),
-                      Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        elevation: 5,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                const Text('Product Details',
-                                    style: TextStyle(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green)),
-                                const SizedBox(height: 20),
-                                _buildTextField('Product Name', nameController,
-                                    Icons.shopping_bag),
-                                const SizedBox(height: 15),
-                                _buildTextField(
-                                    'Product Quantity',
-                                    quantityController,
-                                    Icons.format_list_numbered),
-                                const SizedBox(height: 15),
-                                _buildTextField('Product Description',
-                                    descriptionController, Icons.description,
-                                    isDescription: true),
-                                const SizedBox(height: 15),
-                                _buildTextField('Product Price',
-                                    priceController, Icons.attach_money),
-                                const SizedBox(height: 20),
-                                _buildImageUpload(),
-                                const SizedBox(height: 20),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    if (_formKey.currentState!.validate() &&
-                                        !_isLoading) {
-                                      final name = nameController.text;
-                                      final description =
-                                          descriptionController.text;
-                                      final parsedQuantity =
-                                          int.tryParse(quantityController.text);
-                                      final parsedPrice =
-                                          double.tryParse(priceController.text);
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 20),
+                        Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          elevation: 5,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Form(
+                              key: _formKey,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  const Text('Product Details',
+                                      style: TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green)),
+                                  const SizedBox(height: 20),
+                                  _buildTextField('Product Name', nameController,
+                                      Icons.shopping_bag),
+                                  const SizedBox(height: 15),
+                                  _buildTextField(
+                                      'Product Quantity',
+                                      quantityController,
+                                      Icons.format_list_numbered),
+                                  const SizedBox(height: 15),
+                                  _buildTextField('Product Description',
+                                      descriptionController, Icons.description,
+                                      isDescription: true),
+                                  const SizedBox(height: 15),
+                                  _buildTextField('Product Price',
+                                      priceController, Icons.attach_money),
+                                  const SizedBox(height: 20),
+                                  _buildImageUpload(),
+                                  const SizedBox(height: 20),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate() &&
+                                          !_isLoading) {
+                                        final name = nameController.text;
+                                        final description =
+                                            descriptionController.text;
+                                        final parsedQuantity =
+                                            int.tryParse(quantityController.text);
+                                        final parsedPrice =
+                                            double.tryParse(priceController.text);
 
-                                      if (parsedQuantity == null ||
-                                          parsedPrice == null) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          const SnackBar(
-                                              content: Text(
-                                                  'Please enter valid quantity and price')),
-                                        );
-                                        return;
+                                        if (parsedQuantity == null ||
+                                            parsedPrice == null) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                                content: Text(
+                                                    'Please enter valid quantity and price')),
+                                          );
+                                          return;
+                                        }
+                                        _uploadProductData(name, parsedQuantity,
+                                            description, parsedPrice);
                                       }
-                                      _uploadProductData(name, parsedQuantity,
-                                          description, parsedPrice);
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.green,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 15),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 15),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
                                     ),
+                                    child: const Text('Create Product',
+                                        style: TextStyle(fontSize: 18,color: Colors.white)),
                                   ),
-                                  child: const Text('Create Product',
-                                      style: TextStyle(fontSize: 18,color: Colors.white)),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            if (_isLoading)
-              Container(
-                color: Colors.black.withOpacity(0.5),
-                child: const Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              if (_isLoading)
+                Container(
+                  color: Colors.black.withOpacity(0.5),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 20,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+                    ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

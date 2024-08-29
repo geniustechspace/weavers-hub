@@ -18,13 +18,23 @@ class CartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Your Cart', style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.green,
       ),
-      body: Consumer<Cart>(
-        builder: (context, cart, _) => cart.items.isEmpty
-            ? const _EmptyCartView()
-            : _CartContent(cart: cart),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.green[50]!, Colors.green[100]!],
+          ),
+        ),
+        child: Consumer<Cart>(
+          builder: (context, cart, _) => cart.items.isEmpty
+              ? const _EmptyCartView()
+              : _CartContent(cart: cart),
+        ),
       ),
     );
   }
@@ -334,7 +344,7 @@ class PaymentService {
 
     PayWithPayStack().now(
       context: context,
-      secretKey: "sk_test_6e5fea205206f0b7c76c5487102bb5a147ba54a4",
+      secretKey: "sk_test_fc20a32819750f37fbf5177e193a76455bdecca2",
       customerEmail: email,
       reference: uniqueTransRef,
       callbackUrl: "https://amp.amalitech-dev.net/",
@@ -357,7 +367,7 @@ class PaymentService {
     final response = await http.get(
       Uri.parse("https://api.paystack.co/transaction/verify/$reference"),
       headers: {
-        'Authorization': 'Bearer sk_test_6e5fea205206f0b7c76c5487102bb5a147ba54a4',
+        'Authorization': 'Bearer sk_test_fc20a32819750f37fbf5177e193a76455bdecca2',
       },
     );
 

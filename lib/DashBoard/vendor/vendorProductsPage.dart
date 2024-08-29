@@ -18,7 +18,15 @@ class UserProductsPage extends StatelessWidget {
         backgroundColor: Colors.green,
         elevation: 0,
       ),
-      body: const UserProductsList(),
+      body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.green[50]!, Colors.green[100]!],
+            ),
+          ),
+          child: const UserProductsList()),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Get.to(() => const VendorProductCreation());
