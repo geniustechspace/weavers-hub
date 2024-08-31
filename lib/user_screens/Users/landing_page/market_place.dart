@@ -2,12 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-import 'package:weavershub/DashBoard/Users/landing-page/product-details.dart';
+import 'package:weavershub/user_screens/Users/landing_page/product_details.dart';
 
 import '../users-cart/cart.dart';
-import '../users-cart/cartScreen.dart';
+import '../users-cart/cart_screen.dart';
 
 class MarketPlace extends StatelessWidget {
+  const MarketPlace({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,7 +75,7 @@ class MarketPlace extends StatelessWidget {
 }
 
 class AllProductsGrid extends StatelessWidget {
-  const AllProductsGrid({Key? key}) : super(key: key);
+  const AllProductsGrid({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +129,7 @@ class AllProductsGrid extends StatelessWidget {
 class ProductCard extends StatefulWidget {
   final QueryDocumentSnapshot product;
 
-  const ProductCard({Key? key, required this.product}) : super(key: key);
+  const ProductCard({super.key, required this.product});
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -186,7 +188,7 @@ class _ProductCardState extends State<ProductCard> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  '\GHC ${widget.product['price']}',
+                  'GHC ${widget.product['price']}',
                   style: const TextStyle(color: Colors.green),
                 ),
                 const SizedBox(height: 5),

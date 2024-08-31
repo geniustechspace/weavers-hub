@@ -10,14 +10,14 @@ class CustomInputField extends StatefulWidget {
   final bool showVisibilityToggle; // Added property for visibility toggle
 
   const CustomInputField({
-    Key? key,
+    super.key,
     required this.hintText,
     required this.textEditingController,
     required this.validator,
     required this.keyboardType,
     this.obscureText = false,
     this.showVisibilityToggle = false, // Default to false
-  }) : super(key: key);
+  });
 
   @override
   State<CustomInputField> createState() => _CustomInputFieldState();

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../Widgets/buttons.dart';
-import '../Widgets/custome-text-feild.dart';
-import '../Widgets/customn-loader.dart';
-import '../Widgets/footerButton.dart';
-import 'firebase-auth.dart';
-import 'log-in.dart';
+import '../widgets/buttons.dart';
+import '../widgets/custom_text_feild.dart';
+import '../widgets/custom_loader.dart';
+import '../widgets/footer_button.dart';
+import 'firebase_auth.dart';
+import 'login.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});

@@ -2,15 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_cloud_firestore/firebase_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:weavershub/auth/sign-up.dart';
-import '../DashBoard/Users/landing-page/landing-page.dart';
-import '../DashBoard/admin/adminDashBoard.dart';
-import '../DashBoard/vendor/vendor-screen.dart';
-import '../Widgets/buttons.dart';
-import '../Widgets/custome-text-feild.dart';
-import '../Widgets/customn-loader.dart';
-import '../Widgets/footerButton.dart';
+import 'package:weavershub/auth/signup.dart';
+import '../user_screens/Users/landing_page/landing_page.dart';
+import '../user_screens/admin/admin_dashboard.dart';
+import '../user_screens/vendor/vendor_screen.dart';
+import '../widgets/buttons.dart';
+import '../widgets/custom_text_feild.dart';
+import '../widgets/custom_loader.dart';
+import '../widgets/footer_button.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});

@@ -331,7 +331,7 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text("Order Details", style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
-                  Divider(),
+                  const Divider(),
                   _buildDetailRow('Product', order["productName"]),
                   _buildDetailRow('Total Amount', 'GHC ${order["totalAmount"]}'),
                   _buildDetailRow('Quantity', '${order["quantity"]}'),
