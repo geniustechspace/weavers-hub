@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:weavershub/DashBoard/Users/landing-page/my-orders.dart';
+import 'package:weavershub/user_screens/Users/landing_page/my_orders.dart';
 
-import 'market-place.dart';
+import 'market_place.dart';
 
 
 class NavigationHome extends StatefulWidget {
-  const NavigationHome({Key? key}) : super(key: key);
+  const NavigationHome({super.key});
 
   @override
   State<NavigationHome> createState() => _NavigationHomeState();
@@ -15,7 +15,7 @@ class _NavigationHomeState extends State<NavigationHome> {
   int currentIndex = 0;
   List<Widget> screens = [
 
-     MarketPlace(),
+     const MarketPlace(),
     const MyOrders(),
 
   ];

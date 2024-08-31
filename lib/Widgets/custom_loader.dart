@@ -4,9 +4,10 @@ class CustomLoader extends StatefulWidget {
   final double size;
   final Color color;
 
-  const CustomLoader({Key? key, this.size = 50.0, this.color = Colors.blue}) : super(key: key);
+  const CustomLoader({super.key, this.size = 50.0, this.color = Colors.blue});
 
   @override
+  // ignore: library_private_types_in_public_api
   _CustomLoaderState createState() => _CustomLoaderState();
 }
 

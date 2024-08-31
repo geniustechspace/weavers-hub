@@ -58,9 +58,9 @@ class Cart extends ChangeNotifier {
 
   double getTotalAmount() {
     double total = 0.0;
-    _items.forEach((cartItem) {
+    for (var cartItem in _items) {
       total += cartItem.quantity * cartItem.product['price'];
-    });
+    }
     return total;
   }
 

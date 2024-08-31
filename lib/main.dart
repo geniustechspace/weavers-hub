@@ -2,11 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
-import 'package:weavershub/services/fcm-services.dart';
+import 'package:weavershub/services/fcm_services.dart';
 
-import 'DashBoard/Users/users-cart/cart.dart';
+import 'user_screens/Users/users-cart/cart.dart';
 
-import 'SplashScreen/splash.dart';
+import 'splash_screen/splash.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       // home:  Users(),
-      home: SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }

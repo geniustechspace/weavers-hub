@@ -7,9 +7,10 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class VendorProductCreation extends StatefulWidget {
-  const VendorProductCreation({Key? key}) : super(key: key);
+  const VendorProductCreation({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _VendorProductCreationState createState() => _VendorProductCreationState();
 }
 
@@ -67,6 +68,7 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
 
       await productRef.set(productData);
 
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Product created successfully!')),
       );
@@ -77,6 +79,7 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
         _image = null;
       });
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error creating product: $e')),
       );
