@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:http/http.dart' as http;
 
+import '../../services/notification_service.dart';
+
 
 class VendorOrdersPage extends StatefulWidget {
   const VendorOrdersPage({super.key});
@@ -17,6 +19,43 @@ class VendorOrdersPage extends StatefulWidget {
 
 class _VendorOrdersPageState extends State<VendorOrdersPage> {
   bool? isAccepted = false;
+
+
+
+  // Future<void> sendNotification({
+  //   required String token,
+  //   required String title,
+  //   required String body,
+  // }) async {
+  //   try {
+  //     final url = Uri.parse('https://weavers-hub.onrender.com/send-notification');
+  //     final headers = {
+  //       'Content-Type': 'application/json',
+  //     };
+  //     final payload = {
+  //       'token': token,
+  //       'title': title,
+  //       'body': body,
+  //     };
+  //
+  //     final response = await http.post(
+  //       url,
+  //       headers: headers,
+  //       body: json.encode(payload),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       print('Notification sent successfully');
+  //     } else {
+  //       print('Failed to send notification: ${response.statusCode}');
+  //       print('Response body: ${response.body}');
+  //     }
+  //   } catch (e) {
+  //     print('Error sending notification: $e');
+  //   }
+  // }
+
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
@@ -42,6 +81,7 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
         ),
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
+          // .collection('orders')
               .collectionGroup('sellerOrders')
               .where('userId', isEqualTo: user.uid)
               // .orderBy('timestamp', descending: true)
@@ -69,6 +109,11 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
                 DateTime dateTime = timestamp.toDate();
                 String timeAgo = timeago.format(dateTime, locale: 'en');
                 String formattedDate = DateFormat('MMM d, y').format(dateTime);
+
+                print("************************");
+                print(orderDoc['userId']);
+                print(order['userId'].toString());
+                print(user.uid);
 
                 return Card(
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -131,7 +176,7 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
                                       value: order['acceptOrder'] ?? false,
                                       onChanged: (bool? value) {
                                         _updateOrderStatus(
-                                            orderDoc.reference, value ?? false);
+                                            orderDoc.reference, value ?? false, order['userId']);
                                       },
                                     ),
                                   ),
@@ -154,10 +199,106 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
     );
   }
 
-  void _updateOrderStatus(DocumentReference orderRef, bool accepted) {
-    orderRef.update({'acceptOrder': accepted}).then((_) {
+  // void _updateOrderStatus(DocumentReference orderRef, bool accepted) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: Text(accepted ? 'Accept Order?' : 'Cancel Order Acceptance?'),
+  //       content: Text(accepted
+  //           ? 'Are you sure you want to accept this order?'
+  //           : 'Are you sure you want to cancel this order acceptance?'),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () {
+  //             Navigator.of(context).pop();
+  //           },
+  //           child: const Text('No'),
+  //         ),
+  //         TextButton(
+  //           onPressed: () async {
+  //             Navigator.of(context).pop(); // Close the dialog
+  //
+  //             try {
+  //               await orderRef.update({'acceptOrder': accepted});
+  //
+  //               String orderId = orderRef.id;
+  //               await FirebaseFirestore.instance
+  //                   .collection('orders')
+  //                   .doc(orderId)
+  //                   .update({'acceptOrder': accepted});
+  //
+  //               ScaffoldMessenger.of(context).showSnackBar(
+  //                 SnackBar(
+  //                   content: Text(accepted
+  //                       ? 'Order accepted successfully'
+  //                       : 'Order acceptance cancelled'),
+  //                   duration: const Duration(seconds: 2),
+  //                 ),
+  //               );
+  //             } catch (e) {
+  //               ScaffoldMessenger.of(context).showSnackBar(
+  //                 SnackBar(
+  //                   content: Text('Failed to update order status: $e'),
+  //                   duration: const Duration(seconds: 2),
+  //                 ),
+  //               );
+  //             }
+  //           },
+  //           child: const Text('Yes'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+
+  void _updateOrderStatus(DocumentReference orderRef, bool accepted, String receiverId) {
+    final notificationService = NotificationService();
+    orderRef.update({'acceptOrder': accepted}).then((_) async {
 
       String orderId = orderRef.id;
+
+
+
+      // // Fetch the order details to get the user's ID and FCM token
+      // DocumentSnapshot orderSnapshot = await orderRef.get();
+      // Map<String, dynamic> orderData = orderSnapshot.data() as Map<String, dynamic>;
+      // String userId = orderData['userId'];
+      // Fetch the order details to get the user's ID
+      // DocumentSnapshot orderSnapshot = await orderRef.get();
+      // Map<String, dynamic> orderData = orderSnapshot.data() as Map<String, dynamic>;
+      // String userId = orderData['userId'];
+      //
+      // var user = FirebaseAuth.instance.currentUser;
+      //
+      // await notificationService.sendNotification(
+      //   receiverUserId: receiverId,
+      //   title: 'Order Accepted',
+      //   body: 'Your order #$orderId has been accepted by the vendor!',
+      // );
+
+      // Fetch the user's FCM token
+      // DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+      //     .collection('users')
+      //     .doc(userId)
+      //     .get();
+
+      // Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+      // String? fcmToken = userData['fcmToken'];
+
+      // if (fcmToken != null && accepted) {
+      //   // Send notification to the user
+      //   await sendNotification(
+      //     token: userId,
+      //     title: 'Order Accepted',
+      //     body: 'Your order #$orderId has been accepted by the vendor!',
+      //   );
+      // }
+
+      DocumentSnapshot orderSnapshot = await orderRef.get();
+      Map<String, dynamic> orderData = orderSnapshot.data() as Map<String, dynamic>;
+      String buyerId = orderData['buyerId'];
+
       FirebaseFirestore.instance
           .collection('orders')
           .doc(orderId)
@@ -169,6 +310,14 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
               Text(accepted ? 'Order accepted' : 'Order acceptance cancelled'),
           duration: const Duration(seconds: 1),
         ),
+      );
+      // Send notification to the user who created the order
+      await notificationService.sendNotification(
+        receiverUserId: buyerId,
+        title: accepted ? 'Order Accepted' : 'Order Updated',
+        body: accepted
+            ? 'Your order #$orderId has been accepted by the vendor!'
+            : 'Your order #$orderId has been updated.',
       );
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -280,39 +429,39 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
   // }
 
 
-  Future<void> _sendOrderNotification(String customerId, String orderId) async {
-    try {
-      final userDoc = await FirebaseFirestore.instance.collection('users').doc(customerId).get();
-      final fcmToken = userDoc.data()?['fcmToken'];
-
-      if (fcmToken != null) {
-        final url = Uri.parse('https://fcm.googleapis.com/fcm/send');
-        final headers = {
-          'Content-Type': 'application/json',
-          'Authorization': 'key=YOUR_SERVER_KEY', // Replace with your server key from Firebase console
-        };
-        final body = {
-          'to': fcmToken,
-          'notification': {
-            'title': 'Order Update',
-            'body': 'Your order with ID $orderId has been processed.',
-          },
-          'data': {
-            'orderId': orderId,
-          },
-        };
-
-        final response = await http.post(url, headers: headers, body: json.encode(body));
-        if (response.statusCode == 200) {
-          print('Notification sent successfully');
-        } else {
-          print('Failed to send notification: ${response.statusCode}');
-        }
-      }
-    } catch (e) {
-      print('Error sending notification: $e');
-    }
-  }
+  // Future<void> _sendOrderNotification(String customerId, String orderId) async {
+  //   try {
+  //     final userDoc = await FirebaseFirestore.instance.collection('users').doc(customerId).get();
+  //     final fcmToken = userDoc.data()?['fcmToken'];
+  //
+  //     if (fcmToken != null) {
+  //       final url = Uri.parse('https://fcm.googleapis.com/fcm/send');
+  //       final headers = {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'key=YOUR_SERVER_KEY', // Replace with your server key from Firebase console
+  //       };
+  //       final body = {
+  //         'to': fcmToken,
+  //         'notification': {
+  //           'title': 'Order Update',
+  //           'body': 'Your order with ID $orderId has been processed.',
+  //         },
+  //         'data': {
+  //           'orderId': orderId,
+  //         },
+  //       };
+  //
+  //       final response = await http.post(url, headers: headers, body: json.encode(body));
+  //       if (response.statusCode == 200) {
+  //         print('Notification sent successfully');
+  //       } else {
+  //         print('Failed to send notification: ${response.statusCode}');
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print('Error sending notification: $e');
+  //   }
+  // }
 
 
   void _showOrderDetails(BuildContext context, Map<String, dynamic> order) {

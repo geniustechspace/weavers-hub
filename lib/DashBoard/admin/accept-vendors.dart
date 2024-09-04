@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../services/notification_service.dart';
+
 class AcceptVendors extends StatefulWidget {
   const AcceptVendors({super.key});
 
@@ -39,6 +41,9 @@ class _AcceptVendorsState extends State<AcceptVendors> {
 
   @override
   Widget build(BuildContext context) {
+
+    final notificationService = NotificationService();
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -111,7 +116,16 @@ class _AcceptVendorsState extends State<AcceptVendors> {
                               ElevatedButton.icon(
                                 icon: const Icon(Icons.check),
                                 label: const Text('Approve'),
-                                onPressed: () => _approveVendor(vendor.id),
+                                // onPressed: () =>
+                                onPressed: () async {
+                  _approveVendor(vendor.id);
+                  await notificationService.sendNotification(
+                    receiverUserId: vendor.id,
+                    title: 'New Message from your admin',
+                    body: 'your account has been approved',
+                  );
+                                },
+
                                 style: ElevatedButton.styleFrom(
                                   foregroundColor: Colors.white,
                                   backgroundColor: Colors.green,

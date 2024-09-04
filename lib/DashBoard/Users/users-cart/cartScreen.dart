@@ -1,18 +1,18 @@
-import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:pay_with_paystack/pay_with_paystack.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
+import '../../../services/cart-summery.dart';
+import '../../../services/notification_service.dart';
+import '../../../services/order-services.dart';
+import '../../../services/order-summery-dialog.dart';
+import '../../../services/payment-service.dart';
 import '../landing-page/landing-page.dart';
 import 'cart.dart';
 
 class CartScreen extends StatelessWidget {
-  const CartScreen({Key? key}) : super(key: key);
+  const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +57,8 @@ class _EmptyCartView extends StatelessWidget {
 class _CartContent extends StatelessWidget {
   final Cart cart;
 
+
+
   const _CartContent({required this.cart});
 
   @override
@@ -85,7 +87,7 @@ class _CartContent extends StatelessWidget {
   void _showOrderSummary(BuildContext context, Cart cart, CartSummary cartSummary) {
     showDialog(
       context: context,
-      builder: (BuildContext context) => _OrderSummaryDialog(
+      builder: (BuildContext context) => OrderSummaryDialog(
         cart: cart,
         cartSummary: cartSummary,
         onConfirm: () => _processPayment(context, cart, cartSummary.amountToPay),
@@ -106,7 +108,49 @@ class _CartContent extends StatelessWidget {
     }
   }
 
+  // void _handleSuccessfulPayment(BuildContext context, Cart cart, String reference) async {
+  //   final notificationService = NotificationService();
+  //   try {
+  //     await OrderService().createOrder(cart, reference);
+  //     cart.clear();
+  //     final CartItem item;
+  //
+  //
+  //     // await notificationService.sendNotification(
+  //     //   receiverUserId: item.product['userId'],
+  //     //   title: 'New Message from your admin',
+  //     //   body: 'your account has been approved',
+  //     // );
+  //     // Send notifications to all sellers
+  //     for (var item in cart.items) {
+  //       print(item.product['userId']);
+  //       if (item.product['userId'] != null) {
+  //         await notificationService.sendNotification(
+  //           receiverUserId: item.product['userId'],
+  //           title: 'New Order Received',
+  //           body: 'You have a new order for ${item.product['name']}',
+  //         );
+  //       }else{
+  //         print("userId is null");
+  //       }
+  //     }
+  //
+  //     print(item.product['userId']);
+  //
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Order placed successfully!')),
+  //     );
+  //     Get.to(const NavigationHome());
+  //
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Error placing order: $e')),
+  //     );
+  //   }
+  // }
+
   void _handleSuccessfulPayment(BuildContext context, Cart cart, String reference) async {
+    final notificationService = NotificationService();
     try {
       await OrderService().createOrder(cart, reference);
       cart.clear();
@@ -114,13 +158,13 @@ class _CartContent extends StatelessWidget {
         const SnackBar(content: Text('Order placed successfully!')),
       );
       Get.to(const NavigationHome());
-
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error placing order: $e')),
       );
     }
   }
+
 
   void _handleFailedPayment(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -217,239 +261,8 @@ class _CartSummary extends StatelessWidget {
   }
 }
 
-class _OrderSummaryDialog extends StatelessWidget {
-  final Cart cart;
-  final CartSummary cartSummary;
-  final VoidCallback onConfirm;
-
-  const _OrderSummaryDialog({required this.cart, required this.cartSummary, required this.onConfirm});
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: const Text('Order Summary', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.green)),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Selected Products:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            ...cart.items.map((item) => _OrderSummaryItem(item: item)),
-            const Divider(thickness: 1.5),
-            const SizedBox(height: 10),
-            Text('Subtotal: GHC ${cartSummary.totalAmount}', style: const TextStyle(fontSize: 16)),
-            const Text('Delivery Charge: GHC ${CartSummary.deliveryCharge}', style: TextStyle(fontSize: 16)),
-            const SizedBox(height: 10),
-            Text('Total Amount: GHC ${cartSummary.amountToPay}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
-            const SizedBox(height: 20),
-            const Text('Delivery Information:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const Text('Your order will be delivered within 24-48 hours.'),
-            const SizedBox(height: 10),
-            const Text('Payment Information:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const Text('You can pay using various methods on Paystack: credit/debit cards, mobile money.'),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          child: const Text('Cancel', style: TextStyle(color: Colors.red)),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-          child: const Text('Confirm Order', style: TextStyle(color: Colors.white)),
-          onPressed: () {
-            // Navigator.of(context).pop();
-            onConfirm();
-
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class _OrderSummaryItem extends StatelessWidget {
-  final CartItem item;
-
-  const _OrderSummaryItem({required this.item});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: CachedNetworkImage(
-                imageUrl: item.product['image_url'],
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => const CircularProgressIndicator(),
-                errorWidget: (context, url, error) => const Icon(Icons.error)),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(item.product['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text('Quantity: ${item.quantity}'),
-                Text('Price: GHC ${item.product['price'] * item.quantity}'),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CartSummary {
-  final int itemCount;
-  final double totalAmount;
-  final double amountToPay;
-  static const double deliveryCharge = 10.0;
-
-  CartSummary({required this.itemCount, required this.totalAmount})
-      : amountToPay = totalAmount + deliveryCharge;
-}
-
 CartSummary _calculateCartSummary(Cart cart) {
   int itemCount = cart.items.length;
   double totalAmount = cart.items.fold(0, (sum, item) => sum + item.product['price'] * item.quantity);
   return CartSummary(itemCount: itemCount, totalAmount: totalAmount);
-}
-
-class PaymentService {
-  void makePayment({
-    required BuildContext context,
-    required String email,
-    required double amount,
-    required Function(String) onSuccess,
-    required VoidCallback onFailure,
-  }) async {
-    final uniqueTransRef = PayWithPayStack().generateUuidV4();
-    await FirebaseFirestore.instance.collection('orders').doc(uniqueTransRef).set({
-      'status': 'pending',
-      'createdAt': FieldValue.serverTimestamp(),
-      'userId': FirebaseAuth.instance.currentUser?.uid,
-    });
-
-    PayWithPayStack().now(
-      context: context,
-      secretKey: "sk_test_fc20a32819750f37fbf5177e193a76455bdecca2",
-      customerEmail: email,
-      reference: uniqueTransRef,
-      callbackUrl: "https://amp.amalitech-dev.net/",
-      currency: "GHS",
-      paymentChannel: ["mobile_money", "card"],
-      amount: amount,
-      transactionCompleted: () async {
-        bool isVerified = await _verifyPaymentOnServer(uniqueTransRef);
-        if (isVerified) {
-          onSuccess(uniqueTransRef);
-        } else {
-          onFailure();
-        }
-      },
-      transactionNotCompleted: onFailure,
-    );
-  }
-
-  Future<bool> _verifyPaymentOnServer(String reference) async {
-    final response = await http.get(
-      Uri.parse("https://api.paystack.co/transaction/verify/$reference"),
-      headers: {
-        'Authorization': 'Bearer sk_test_fc20a32819750f37fbf5177e193a76455bdecca2',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['data'] != null && data['data']['status'] == 'success';
-    }
-    return false;
-  }
-}
-
-class OrderService {
-  Future<void> createOrder(Cart cart, String reference) async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user == null) throw Exception('User not authenticated');
-
-      // Fetch user details from Firestore
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-
-      if (!userDoc.exists) throw Exception('User document not found');
-
-      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
-
-      List<Map<String, dynamic>> productsBought = cart.items.map((
-          CartItem item) =>
-      {
-        'userId': item.product['userId'],
-        'name': item.product['name'],
-        'price': item.product['price'],
-        'image_url': item.product['image_url'],
-        'quantity': item.quantity,
-      }).toList();
-
-      double totalAmount = cart.getTotalAmount();
-      const double deliveryCharge = 10.0;
-      double amountToPay = totalAmount + deliveryCharge;
-
-      Map<String, dynamic> orderData = {
-        'products': productsBought,
-        'totalAmount': amountToPay,
-        'userName': userData['name'],
-        'email': userData['email'],
-        'phone': userData['phone'],
-        'location': userData['location'],
-        'deliveryCharge': deliveryCharge,
-        'itemsCount': cart.items.length,
-        'orderDate': FieldValue.serverTimestamp(),
-        'status': true,
-        'acceptOrder': false,
-        'userId': user.uid,
-      };
-
-      DocumentReference orderRef = FirebaseFirestore.instance.collection(
-          'orders').doc(reference);
-      await orderRef.set(orderData);
-
-      // Create individual order items for each seller
-      for (var product in productsBought) {
-        // print("Creating seller order for userId: ${product['userId']}");
-        await orderRef.collection('sellerOrders').doc(reference).set({
-          'products': productsBought,
-          'userId': product['userId'],
-          'userName': userData['name'],
-          'email': userData['email'],
-          'orderDate': FieldValue.serverTimestamp(),
-          'phone': userData['phone'],
-          'location': userData['location'],
-          'totalAmount': amountToPay,
-          'productName': product['name'],
-          'quantity': product['quantity'],
-          'deliveryCharge': deliveryCharge,
-          'status': true,
-          'acceptOrder': false,
-        });
-      }
-    } catch (e) {
-      print("Error creating order: $e");
-      throw e;
-    }
-  }
 }

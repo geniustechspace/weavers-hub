@@ -149,7 +149,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
               children: [
                 const Text(
                   'Registered Vendors: ',
-                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 10, color: Colors.grey),
                 ),
                 Text(
                   '${snapshot.data}',
@@ -191,7 +191,7 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
               children: [
                 const Text(
                   'Incoming vendors: ',
-                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 10, color: Colors.grey),
                 ),
                 Text(
                   '${snapshot.data}',

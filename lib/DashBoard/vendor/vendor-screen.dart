@@ -7,6 +7,8 @@ import 'package:weavershub/DashBoard/vendor/vendor-orders-page.dart';
 import 'package:weavershub/DashBoard/vendor/vendorProductsPage.dart';
 import 'package:weavershub/DashBoard/vendor/view-accepted-orders.dart';
 
+import '../../services/notification_service.dart';
+
 class VendorDashboard extends StatelessWidget {
   const VendorDashboard({super.key});
 
@@ -34,6 +36,8 @@ class VendorDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final notificationService = NotificationService();
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -86,6 +90,17 @@ class VendorDashboard extends StatelessWidget {
                           _buildActionButton('Attended orders', Icons.check_circle, () {
                             Get.to(() => const VendorAcceptedOrdersPage());
                           }),
+
+                          // SizedBox(height: 20,),
+                          // _buildActionButton('Attended orders', Icons.check_circle, () async {
+                          //   // final user = FirebaseAuth.instance.currentUser;
+                          //     // await notificationService.sendNotification(
+                          //     //   receiverUserId: user!.uid,
+                          //     //   title: 'New Message',
+                          //     //   body: 'You have a new message!',
+                          //     // );
+                          //
+                          // }),
                         ],
                       ),
                     ),
