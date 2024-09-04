@@ -9,6 +9,7 @@ class ProductDetailPage extends StatefulWidget {
   const ProductDetailPage({super.key, required this.product});
 
   @override
+  // ignore: library_private_types_in_public_api
   _ProductDetailPageState createState() => _ProductDetailPageState();
 }
 
@@ -125,7 +126,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             color: Colors.green),
                         const SizedBox(width: 10),
                         Text(
-                          '\GHC: ${widget.product['price']}',
+                          'GHC: ${widget.product['price']}',
                           style: const TextStyle(
                             fontSize: 22,
                             color: Colors.green,

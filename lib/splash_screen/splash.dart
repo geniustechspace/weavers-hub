@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import '../Widgets/buttons.dart';
-import '../auth/log-in.dart';
-import '../auth/sign-up.dart';
+import '../widgets/buttons.dart';
+import '../auth/login.dart';
 
 
 class SplashScreen extends StatelessWidget {
-  SplashScreen({super.key});
+  const SplashScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

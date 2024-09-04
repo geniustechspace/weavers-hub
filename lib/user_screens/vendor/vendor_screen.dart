@@ -2,10 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:weavershub/DashBoard/vendor/product-creation.dart';
-import 'package:weavershub/DashBoard/vendor/vendor-orders-page.dart';
-import 'package:weavershub/DashBoard/vendor/vendorProductsPage.dart';
-import 'package:weavershub/DashBoard/vendor/view-accepted-orders.dart';
+import 'package:weavershub/user_screens/vendor/product_creation.dart';
+import 'package:weavershub/user_screens/vendor/vendor_orders_page.dart';
+import 'package:weavershub/user_screens/vendor/vendor_products_page.dart';
+import 'package:weavershub/user_screens/vendor/accepted_orders.dart';
 
 import '../../services/notification_service.dart';
 

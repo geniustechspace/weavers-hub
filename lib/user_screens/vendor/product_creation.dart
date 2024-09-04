@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,10 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:http/http.dart' as http;
 
 class VendorProductCreation extends StatefulWidget {
-  const VendorProductCreation({Key? key}) : super(key: key);
+  const VendorProductCreation({super.key});
 
   @override
   _VendorProductCreationState createState() => _VendorProductCreationState();
@@ -37,42 +35,6 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
     });
   }
 
-  Future<void> sendNotification({
-    required String token,
-    required String title,
-    required String body,
-  }) async {
-    try {
-      // Fetch the user's FCM token from Firestore
-      // final userDoc = await FirebaseFirestore.instance.collection('users').doc(customerId).get();
-      // final fcmToken = userDoc.data()?['fcmToken'];
-      final url = Uri.parse('https://weavers-hub.onrender.com/send-notification');
-      final headers = {
-        'Content-Type': 'application/json',
-      };
-      final payload = {
-        'token': token,
-        'title': title,
-        'body': body,
-      };
-
-      final response = await http.post(
-        url,
-        headers: headers,
-        body: json.encode(payload),
-      );
-
-      if (response.statusCode == 200) {
-        print('Notification sent successfully');
-      } else {
-        print('Failed to send notification: ${response.statusCode}');
-        print('Response body: ${response.body}');
-      }
-    } catch (e) {
-      print('Error sending notification: $e');
-    }
-  }
-
   Future<void> _uploadProductData(
       String name, int quantity, String description, double price) async {
     setState(() {
@@ -84,7 +46,7 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
       if (user == null) throw Exception('User not logged in');
 
       DocumentReference productRef =
-          FirebaseFirestore.instance.collection('products').doc();
+      FirebaseFirestore.instance.collection('products').doc();
 
       Map<String, dynamic> productData = {
         'userId': user.uid,
@@ -105,6 +67,7 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
 
       await productRef.set(productData);
 
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Product created successfully!')),
       );
@@ -115,6 +78,7 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
         _image = null;
       });
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error creating product: $e')),
       );
@@ -130,7 +94,7 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
     return Scaffold(
       appBar: AppBar(
         title:
-            const Text('Create Product', style: TextStyle(color: Colors.white)),
+        const Text('Create Product', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green,
         elevation: 0,
         leading: IconButton(
@@ -201,16 +165,16 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
                                   _buildImageUpload(),
                                   const SizedBox(height: 20),
                                   ElevatedButton(
-                                    onPressed: () async {
+                                    onPressed: () {
                                       if (_formKey.currentState!.validate() &&
                                           !_isLoading) {
                                         final name = nameController.text;
                                         final description =
                                             descriptionController.text;
                                         final parsedQuantity =
-                                            int.tryParse(quantityController.text);
+                                        int.tryParse(quantityController.text);
                                         final parsedPrice =
-                                            double.tryParse(priceController.text);
+                                        double.tryParse(priceController.text);
 
                                         if (parsedQuantity == null ||
                                             parsedPrice == null) {
@@ -224,12 +188,6 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
                                         }
                                         _uploadProductData(name, parsedQuantity,
                                             description, parsedPrice);
-
-                                        await sendNotification(
-                                        token: "dv-CGEPVSemODWuSyj9Bko:APA91bGXmsCl8uoiHDdmEFzGWL4040KFih4TN2phI0qbjTfQc2bItH4xoKU3se_LYGR9kan2lYWs81rbIwT4AlAxPrETx7rE_cl5HByzQ0P-g9-2BdbvW4aUFGZ0",
-                                        title: "Your notification title",
-                                        body: "Your notification body"
-                                        );
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(
@@ -326,20 +284,20 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
             ),
             child: _image == null
                 ? const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.add_a_photo, size: 50, color: Colors.grey),
-                        SizedBox(height: 10),
-                        Text('Tap to upload your product image!',
-                            style: TextStyle(color: Colors.grey)),
-                      ],
-                    ),
-                  )
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add_a_photo, size: 50, color: Colors.grey),
+                  SizedBox(height: 10),
+                  Text('Tap to upload your product image!',
+                      style: TextStyle(color: Colors.grey)),
+                ],
+              ),
+            )
                 : ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.file(_image!, fit: BoxFit.cover),
-                  ),
+              borderRadius: BorderRadius.circular(10),
+              child: Image.file(_image!, fit: BoxFit.cover),
+            ),
           ),
         ),
       ],

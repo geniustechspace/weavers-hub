@@ -1,15 +1,34 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:pay_with_paystack/pay_with_paystack.dart';
 import 'package:provider/provider.dart';
+
 import '../../../services/cart-summery.dart';
 import '../../../services/notification_service.dart';
-import '../../../services/order-services.dart';
 import '../../../services/order-summery-dialog.dart';
-import '../../../services/payment-service.dart';
-import '../landing-page/landing-page.dart';
+import '../landing_page/landing_page.dart';
 import 'cart.dart';
+import 'package:http/http.dart' as http;
+// <<<<<<< HEAD:lib/DashBoard/Users/users-cart/cartScreen.dart
+// import 'package:provider/provider.dart';
+// import '../../../services/cart-summery.dart';
+// import '../../../services/notification_service.dart';
+// import '../../../services/order-services.dart';
+// import '../../../services/order-summery-dialog.dart';
+// import '../../../services/payment-service.dart';
+// import '../landing-page/landing-page.dart';
+// =======
+// import 'package:pay_with_paystack/pay_with_paystack.dart';
+// import 'package:provider/provider.dart';
+//
+// import '../landing_page/landing_page.dart';
+// >>>>>>> 22d39f7a30da42f76d2ddc775f07a725d984befc:lib/user_screens/Users/users-cart/cart_screen.dart
+// import 'cart.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -265,4 +284,135 @@ CartSummary _calculateCartSummary(Cart cart) {
   int itemCount = cart.items.length;
   double totalAmount = cart.items.fold(0, (sum, item) => sum + item.product['price'] * item.quantity);
   return CartSummary(itemCount: itemCount, totalAmount: totalAmount);
+// <<<<<<< HEAD:lib/DashBoard/Users/users-cart/cartScreen.dart
+// }
+// =======
 }
+
+class PaymentService {
+  void makePayment({
+    required BuildContext context,
+    required String email,
+    required double amount,
+    required Function(String) onSuccess,
+    required VoidCallback onFailure,
+  }) async {
+    final uniqueTransRef = PayWithPayStack().generateUuidV4();
+    await FirebaseFirestore.instance.collection('orders').doc(uniqueTransRef).set({
+      'status': 'pending',
+      'createdAt': FieldValue.serverTimestamp(),
+      'userId': FirebaseAuth.instance.currentUser?.uid,
+    });
+
+    PayWithPayStack().now(
+      context: context,
+      secretKey: "sk_test_fc20a32819750f37fbf5177e193a76455bdecca2",
+      customerEmail: email,
+      reference: uniqueTransRef,
+      callbackUrl: "https://amp.amalitech-dev.net/",
+      currency: "GHS",
+      paymentChannel: ["mobile_money", "card"],
+      amount: amount,
+      transactionCompleted: () async {
+        bool isVerified = await _verifyPaymentOnServer(uniqueTransRef);
+        if (isVerified) {
+          onSuccess(uniqueTransRef);
+        } else {
+          onFailure();
+        }
+      },
+      transactionNotCompleted: onFailure,
+    );
+  }
+
+  Future<bool> _verifyPaymentOnServer(String reference) async {
+    final response = await http.get(
+      Uri.parse("https://api.paystack.co/transaction/verify/$reference"),
+      headers: {
+        'Authorization': 'Bearer sk_test_fc20a32819750f37fbf5177e193a76455bdecca2',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['data'] != null && data['data']['status'] == 'success';
+    }
+    return false;
+  }
+}
+
+class OrderService {
+  Future<void> createOrder(Cart cart, String reference) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) throw Exception('User not authenticated');
+
+      // Fetch user details from Firestore
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (!userDoc.exists) throw Exception('User document not found');
+
+      Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+
+      List<Map<String, dynamic>> productsBought = cart.items.map((
+          CartItem item) =>
+      {
+        'userId': item.product['userId'],
+        'name': item.product['name'],
+        'price': item.product['price'],
+        'image_url': item.product['image_url'],
+        'quantity': item.quantity,
+      }).toList();
+
+      double totalAmount = cart.getTotalAmount();
+      const double deliveryCharge = 10.0;
+      double amountToPay = totalAmount + deliveryCharge;
+
+      Map<String, dynamic> orderData = {
+        'products': productsBought,
+        'totalAmount': amountToPay,
+        'userName': userData['name'],
+        'email': userData['email'],
+        'phone': userData['phone'],
+        'location': userData['location'],
+        'deliveryCharge': deliveryCharge,
+        'itemsCount': cart.items.length,
+        'orderDate': FieldValue.serverTimestamp(),
+        'status': true,
+        'acceptOrder': false,
+        'userId': user.uid,
+      };
+
+      DocumentReference orderRef = FirebaseFirestore.instance.collection(
+          'orders').doc(reference);
+      await orderRef.set(orderData);
+
+      // Create individual order items for each seller
+      for (var product in productsBought) {
+        // print("Creating seller order for userId: ${product['userId']}");
+        await orderRef.collection('sellerOrders').doc(reference).set({
+          'products': productsBought,
+          'userId': product['userId'],
+          'userName': userData['name'],
+          'email': userData['email'],
+          'orderDate': FieldValue.serverTimestamp(),
+          'phone': userData['phone'],
+          'location': userData['location'],
+          'totalAmount': amountToPay,
+          'productName': product['name'],
+          'quantity': product['quantity'],
+          'deliveryCharge': deliveryCharge,
+          'status': true,
+          'acceptOrder': false,
+        });
+      }
+    } catch (e) {
+      print("Error creating order: $e");
+      throw e;
+    }
+  }
+}
+// >>>>>>> 22d39f7a30da42f76d2ddc775f07a725d984befc:lib/user_screens/Users/users-cart/cart_screen.dart

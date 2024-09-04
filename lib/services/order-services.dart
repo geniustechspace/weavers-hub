@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../DashBoard/Users/users-cart/cart.dart';
+
+import '../user_screens/Users/users-cart/cart.dart';
 import 'notification_service.dart';
 
 class OrderService {
