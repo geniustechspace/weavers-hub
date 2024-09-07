@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 
-import '../user_screens/Users/users-cart/cart.dart';
-import 'cart-summery.dart';
-import 'order-summery.dart';
+import '../userScreens/Users/cart/cart.dart';
+import 'cart_summery.dart';
+import 'order_summery.dart';
 
 class OrderSummaryDialog extends StatelessWidget {
   final Cart cart;

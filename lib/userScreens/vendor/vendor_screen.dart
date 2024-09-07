@@ -2,11 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:weavershub/user_screens/vendor/product_creation.dart';
-import 'package:weavershub/user_screens/vendor/vendor_orders_page.dart';
-import 'package:weavershub/user_screens/vendor/vendor_products_page.dart';
-import 'package:weavershub/user_screens/vendor/accepted_orders.dart';
+import 'package:weavershub/userScreens/vendor/product_creation.dart';
+import 'package:weavershub/userScreens/vendor/vendor_products_page.dart';
 
+
+import '../../DashBoard/vendor/vendor_orders_page.dart';
+import '../../DashBoard/vendor/view_accepted_orders.dart';
 import '../../services/notification_service.dart';
 
 class VendorDashboard extends StatelessWidget {

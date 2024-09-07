@@ -8,19 +8,19 @@ import 'package:get/get.dart';
 import 'package:pay_with_paystack/pay_with_paystack.dart';
 import 'package:provider/provider.dart';
 
-import '../../../services/cart-summery.dart';
+import '../../../services/cart_summery.dart';
 import '../../../services/notification_service.dart';
-import '../../../services/order-summery-dialog.dart';
-import '../landing_page/landing_page.dart';
+import '../../../services/order_summery_dialog.dart';
+import '../landingPage/landing_page.dart';
 import 'cart.dart';
 import 'package:http/http.dart' as http;
 // <<<<<<< HEAD:lib/DashBoard/Users/users-cart/cartScreen.dart
 // import 'package:provider/provider.dart';
-// import '../../../services/cart-summery.dart';
+// import '../../../services/cart_summery.dart';
 // import '../../../services/notification_service.dart';
-// import '../../../services/order-services.dart';
-// import '../../../services/order-summery-dialog.dart';
-// import '../../../services/payment-service.dart';
+// import '../../../services/order_services.dart';
+// import '../../../services/order_summery_dialog.dart';
+// import '../../../services/payment_service.dart';
 // import '../landing-page/landing-page.dart';
 // =======
 // import 'package:pay_with_paystack/pay_with_paystack.dart';
@@ -284,9 +284,7 @@ CartSummary _calculateCartSummary(Cart cart) {
   int itemCount = cart.items.length;
   double totalAmount = cart.items.fold(0, (sum, item) => sum + item.product['price'] * item.quantity);
   return CartSummary(itemCount: itemCount, totalAmount: totalAmount);
-// <<<<<<< HEAD:lib/DashBoard/Users/users-cart/cartScreen.dart
-// }
-// =======
+
 }
 
 class PaymentService {

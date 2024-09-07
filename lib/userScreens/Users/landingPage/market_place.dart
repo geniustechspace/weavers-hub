@@ -2,10 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-import 'package:weavershub/user_screens/Users/landing_page/product_details.dart';
+import 'package:weavershub/userScreens/Users/landingPage/product_details.dart';
 
-import '../users-cart/cart.dart';
-import '../users-cart/cart_screen.dart';
+import '../cart/cart.dart';
+import '../cart/cart_screen.dart';
+
 
 class MarketPlace extends StatelessWidget {
   const MarketPlace({super.key});

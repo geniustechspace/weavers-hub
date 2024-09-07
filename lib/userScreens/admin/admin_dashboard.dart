@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:weavershub/user_screens/admin/accept_vendors.dart';
+
+import '../../DashBoard/admin/accept_vendors.dart';
 
 class AdminDashBoard extends StatefulWidget {
   const AdminDashBoard({super.key});
