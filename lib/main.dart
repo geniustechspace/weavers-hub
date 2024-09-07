@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
 import 'package:weavershub/services/fcm_services.dart';
+import 'package:weavershub/splashScreen/splash.dart';
+import 'package:weavershub/userScreens/Users/cart/cart.dart';
 
-import 'user_screens/Users/users-cart/cart.dart';
 
-import 'splash_screen/splash.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {

@@ -1,14 +1,34 @@
 import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pay_with_paystack/pay_with_paystack.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-import '../landing_page/landing_page.dart';
+
+import '../../../services/cart_summery.dart';
+import '../../../services/notification_service.dart';
+import '../../../services/order_summery_dialog.dart';
+import '../landingPage/landing_page.dart';
 import 'cart.dart';
+import 'package:http/http.dart' as http;
+// <<<<<<< HEAD:lib/DashBoard/Users/users-cart/cartScreen.dart
+// import 'package:provider/provider.dart';
+// import '../../../services/cart_summery.dart';
+// import '../../../services/notification_service.dart';
+// import '../../../services/order_services.dart';
+// import '../../../services/order_summery_dialog.dart';
+// import '../../../services/payment_service.dart';
+// import '../landing-page/landing-page.dart';
+// =======
+// import 'package:pay_with_paystack/pay_with_paystack.dart';
+// import 'package:provider/provider.dart';
+//
+// import '../landing_page/landing_page.dart';
+// >>>>>>> 22d39f7a30da42f76d2ddc775f07a725d984befc:lib/user_screens/Users/users-cart/cart_screen.dart
+// import 'cart.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -56,6 +76,8 @@ class _EmptyCartView extends StatelessWidget {
 class _CartContent extends StatelessWidget {
   final Cart cart;
 
+
+
   const _CartContent({required this.cart});
 
   @override
@@ -84,7 +106,7 @@ class _CartContent extends StatelessWidget {
   void _showOrderSummary(BuildContext context, Cart cart, CartSummary cartSummary) {
     showDialog(
       context: context,
-      builder: (BuildContext context) => _OrderSummaryDialog(
+      builder: (BuildContext context) => OrderSummaryDialog(
         cart: cart,
         cartSummary: cartSummary,
         onConfirm: () => _processPayment(context, cart, cartSummary.amountToPay),
@@ -105,7 +127,49 @@ class _CartContent extends StatelessWidget {
     }
   }
 
+  // void _handleSuccessfulPayment(BuildContext context, Cart cart, String reference) async {
+  //   final notificationService = NotificationService();
+  //   try {
+  //     await OrderService().createOrder(cart, reference);
+  //     cart.clear();
+  //     final CartItem item;
+  //
+  //
+  //     // await notificationService.sendNotification(
+  //     //   receiverUserId: item.product['userId'],
+  //     //   title: 'New Message from your admin',
+  //     //   body: 'your account has been approved',
+  //     // );
+  //     // Send notifications to all sellers
+  //     for (var item in cart.items) {
+  //       print(item.product['userId']);
+  //       if (item.product['userId'] != null) {
+  //         await notificationService.sendNotification(
+  //           receiverUserId: item.product['userId'],
+  //           title: 'New Order Received',
+  //           body: 'You have a new order for ${item.product['name']}',
+  //         );
+  //       }else{
+  //         print("userId is null");
+  //       }
+  //     }
+  //
+  //     print(item.product['userId']);
+  //
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Order placed successfully!')),
+  //     );
+  //     Get.to(const NavigationHome());
+  //
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Error placing order: $e')),
+  //     );
+  //   }
+  // }
+
   void _handleSuccessfulPayment(BuildContext context, Cart cart, String reference) async {
+    final notificationService = NotificationService();
     try {
       await OrderService().createOrder(cart, reference);
       cart.clear();
@@ -113,13 +177,13 @@ class _CartContent extends StatelessWidget {
         const SnackBar(content: Text('Order placed successfully!')),
       );
       Get.to(const NavigationHome());
-
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error placing order: $e')),
       );
     }
   }
+
 
   void _handleFailedPayment(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -216,114 +280,11 @@ class _CartSummary extends StatelessWidget {
   }
 }
 
-class _OrderSummaryDialog extends StatelessWidget {
-  final Cart cart;
-  final CartSummary cartSummary;
-  final VoidCallback onConfirm;
-
-  const _OrderSummaryDialog({required this.cart, required this.cartSummary, required this.onConfirm});
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: const Text('Order Summary', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.green)),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Selected Products:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            ...cart.items.map((item) => _OrderSummaryItem(item: item)),
-            const Divider(thickness: 1.5),
-            const SizedBox(height: 10),
-            Text('Subtotal: GHC ${cartSummary.totalAmount}', style: const TextStyle(fontSize: 16)),
-            const Text('Delivery Charge: GHC ${CartSummary.deliveryCharge}', style: TextStyle(fontSize: 16)),
-            const SizedBox(height: 10),
-            Text('Total Amount: GHC ${cartSummary.amountToPay}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
-            const SizedBox(height: 20),
-            const Text('Delivery Information:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const Text('Your order will be delivered within 24-48 hours.'),
-            const SizedBox(height: 10),
-            const Text('Payment Information:', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            const Text('You can pay using various methods on Paystack: credit/debit cards, mobile money.'),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          child: const Text('Cancel', style: TextStyle(color: Colors.red)),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-          child: const Text('Confirm Order', style: TextStyle(color: Colors.white)),
-          onPressed: () {
-            // Navigator.of(context).pop();
-            onConfirm();
-
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class _OrderSummaryItem extends StatelessWidget {
-  final CartItem item;
-
-  const _OrderSummaryItem({required this.item});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: CachedNetworkImage(
-                imageUrl: item.product['image_url'],
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => const CircularProgressIndicator(),
-                errorWidget: (context, url, error) => const Icon(Icons.error)),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(item.product['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text('Quantity: ${item.quantity}'),
-                Text('Price: GHC ${item.product['price'] * item.quantity}'),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class CartSummary {
-  final int itemCount;
-  final double totalAmount;
-  final double amountToPay;
-  static const double deliveryCharge = 10.0;
-
-  CartSummary({required this.itemCount, required this.totalAmount})
-      : amountToPay = totalAmount + deliveryCharge;
-}
-
 CartSummary _calculateCartSummary(Cart cart) {
   int itemCount = cart.items.length;
   double totalAmount = cart.items.fold(0, (sum, item) => sum + item.product['price'] * item.quantity);
   return CartSummary(itemCount: itemCount, totalAmount: totalAmount);
+
 }
 
 class PaymentService {
@@ -452,3 +413,4 @@ class OrderService {
     }
   }
 }
+// >>>>>>> 22d39f7a30da42f76d2ddc775f07a725d984befc:lib/user_screens/Users/users-cart/cart_screen.dart

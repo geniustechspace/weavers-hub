@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
-import 'package:weavershub/user_screens/vendor/product_creation.dart';
+import 'package:weavershub/userScreens/vendor/product_creation.dart';
 
 class UserProductsPage extends StatelessWidget {
   const UserProductsPage({super.key});

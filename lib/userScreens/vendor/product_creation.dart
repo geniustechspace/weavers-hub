@@ -10,7 +10,6 @@ class VendorProductCreation extends StatefulWidget {
   const VendorProductCreation({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _VendorProductCreationState createState() => _VendorProductCreationState();
 }
 
@@ -47,7 +46,7 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
       if (user == null) throw Exception('User not logged in');
 
       DocumentReference productRef =
-          FirebaseFirestore.instance.collection('products').doc();
+      FirebaseFirestore.instance.collection('products').doc();
 
       Map<String, dynamic> productData = {
         'userId': user.uid,
@@ -95,7 +94,7 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
     return Scaffold(
       appBar: AppBar(
         title:
-            const Text('Create Product', style: TextStyle(color: Colors.white)),
+        const Text('Create Product', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green,
         elevation: 0,
         leading: IconButton(
@@ -173,9 +172,9 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
                                         final description =
                                             descriptionController.text;
                                         final parsedQuantity =
-                                            int.tryParse(quantityController.text);
+                                        int.tryParse(quantityController.text);
                                         final parsedPrice =
-                                            double.tryParse(priceController.text);
+                                        double.tryParse(priceController.text);
 
                                         if (parsedQuantity == null ||
                                             parsedPrice == null) {
@@ -285,20 +284,20 @@ class _VendorProductCreationState extends State<VendorProductCreation> {
             ),
             child: _image == null
                 ? const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.add_a_photo, size: 50, color: Colors.grey),
-                        SizedBox(height: 10),
-                        Text('Tap to upload your product image!',
-                            style: TextStyle(color: Colors.grey)),
-                      ],
-                    ),
-                  )
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add_a_photo, size: 50, color: Colors.grey),
+                  SizedBox(height: 10),
+                  Text('Tap to upload your product image!',
+                      style: TextStyle(color: Colors.grey)),
+                ],
+              ),
+            )
                 : ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.file(_image!, fit: BoxFit.cover),
-                  ),
+              borderRadius: BorderRadius.circular(10),
+              child: Image.file(_image!, fit: BoxFit.cover),
+            ),
           ),
         ),
       ],

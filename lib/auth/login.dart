@@ -3,9 +3,10 @@ import 'package:firebase_cloud_firestore/firebase_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:weavershub/auth/signup.dart';
-import '../user_screens/Users/landing_page/landing_page.dart';
-import '../user_screens/admin/admin_dashboard.dart';
-import '../user_screens/vendor/vendor_screen.dart';
+
+import '../DashBoard/admin/admin_dash_board.dart';
+import '../userScreens/Users/landingPage/landing_page.dart';
+import '../userScreens/vendor/vendor_screen.dart';
 import '../widgets/buttons.dart';
 import '../widgets/custom_text_feild.dart';
 import '../widgets/custom_loader.dart';

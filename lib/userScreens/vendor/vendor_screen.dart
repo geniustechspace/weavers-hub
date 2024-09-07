@@ -2,10 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:weavershub/user_screens/vendor/product_creation.dart';
-import 'package:weavershub/user_screens/vendor/vendor_orders_page.dart';
-import 'package:weavershub/user_screens/vendor/vendor_products_page.dart';
-import 'package:weavershub/user_screens/vendor/accepted_orders.dart';
+import 'package:weavershub/userScreens/vendor/product_creation.dart';
+import 'package:weavershub/userScreens/vendor/vendor_products_page.dart';
+
+
+import '../../DashBoard/vendor/vendor_orders_page.dart';
+import '../../DashBoard/vendor/view_accepted_orders.dart';
+import '../../services/notification_service.dart';
 
 class VendorDashboard extends StatelessWidget {
   const VendorDashboard({super.key});
@@ -34,6 +37,8 @@ class VendorDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final notificationService = NotificationService();
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -86,6 +91,17 @@ class VendorDashboard extends StatelessWidget {
                           _buildActionButton('Attended orders', Icons.check_circle, () {
                             Get.to(() => const VendorAcceptedOrdersPage());
                           }),
+
+                          // SizedBox(height: 20,),
+                          // _buildActionButton('Attended orders', Icons.check_circle, () async {
+                          //   // final user = FirebaseAuth.instance.currentUser;
+                          //     // await notificationService.sendNotification(
+                          //     //   receiverUserId: user!.uid,
+                          //     //   title: 'New Message',
+                          //     //   body: 'You have a new message!',
+                          //     // );
+                          //
+                          // }),
                         ],
                       ),
                     ),
