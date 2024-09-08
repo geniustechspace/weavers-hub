@@ -108,7 +108,6 @@ class MyOrders extends StatelessWidget {
                                     _buildAcceptanceStatusChip(orderData['acceptOrder'] ?? false),
                                   ],
                                 ),
-
                               ],
                             ),
                           ],
@@ -204,6 +203,7 @@ class MyOrders extends StatelessWidget {
                   _buildDetailRow('Phone', orderData['phone']),
                   _buildDetailRow('Email', orderData['email']),
                   _buildDetailRow('Status', orderData['status'] ? 'Completed' : 'Pending'),
+                  _buildDetailRow('isDelivered', orderData['isDelivered'] ? 'Yes' : 'No'),
                   const SizedBox(height: 16),
                   const Text('Products:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   const SizedBox(height: 8),

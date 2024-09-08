@@ -323,8 +323,7 @@ class VendorDetailsBottomSheet extends StatelessWidget {
           .collection('users')
           .doc(vendorId)
           .update({
-
-        'isVendorApproved': false,
+        'isVendorApproved': false
       });
 
       ScaffoldMessenger.of(context)
@@ -369,6 +368,7 @@ class VendorDetailsBottomSheet extends StatelessWidget {
                   _buildStatCard('Orders Received', '${stats['ordersReceived']}', Icons.shopping_bag),
                   const SizedBox(height: 10),
                   _buildStatCard('Orders Attended', '${stats['ordersAttended']}', Icons.check_circle),
+                  _buildStatCard('Item delivered', '${stats['ordersAttended']}', Icons.check_circle),
                   const SizedBox(height: 15,),
                   OutlinedButton.icon(
                     icon: const Icon(Icons.stop_circle_outlined, color: Colors.red),

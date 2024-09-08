@@ -14,21 +14,7 @@ import '../../../services/order_summery_dialog.dart';
 import '../landingPage/landing_page.dart';
 import 'cart.dart';
 import 'package:http/http.dart' as http;
-// <<<<<<< HEAD:lib/DashBoard/Users/users-cart/cartScreen.dart
-// import 'package:provider/provider.dart';
-// import '../../../services/cart_summery.dart';
-// import '../../../services/notification_service.dart';
-// import '../../../services/order_services.dart';
-// import '../../../services/order_summery_dialog.dart';
-// import '../../../services/payment_service.dart';
-// import '../landing-page/landing-page.dart';
-// =======
-// import 'package:pay_with_paystack/pay_with_paystack.dart';
-// import 'package:provider/provider.dart';
-//
-// import '../landing_page/landing_page.dart';
-// >>>>>>> 22d39f7a30da42f76d2ddc775f07a725d984befc:lib/user_screens/Users/users-cart/cart_screen.dart
-// import 'cart.dart';
+
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -380,6 +366,7 @@ class OrderService {
         'itemsCount': cart.items.length,
         'orderDate': FieldValue.serverTimestamp(),
         'status': true,
+        'isDelivered': true,
         'acceptOrder': false,
         'userId': user.uid,
       };
@@ -413,4 +400,3 @@ class OrderService {
     }
   }
 }
-// >>>>>>> 22d39f7a30da42f76d2ddc775f07a725d984befc:lib/user_screens/Users/users-cart/cart_screen.dart
