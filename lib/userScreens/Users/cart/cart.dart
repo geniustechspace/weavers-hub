@@ -16,8 +16,11 @@ class Cart extends ChangeNotifier {
 
   int get itemCount => _items.length;
 
-  void updateItemQuantity(QueryDocumentSnapshot product, int newQuantity) {
+  void updateItemQuantity(QueryDocumentSnapshot product, int newQuantity)
     final existingIndex = _items.indexWhere((item) => item.product.id == product.id);
+    final existingIndex =
+        _items.indexWhere((item) => item.product.id == product.id);
+
     if (existingIndex >= 0) {
       if (newQuantity > 0) {
         _items[existingIndex].quantity = newQuantity;
@@ -32,14 +35,23 @@ class Cart extends ChangeNotifier {
 
   int getItemQuantity(QueryDocumentSnapshot product) {
     final existingItem = _items.firstWhere(
+
           (item) => item.product.id == product.id,
+
+      (item) => item.product.id == product.id,
+
       orElse: () => CartItem(product: product, quantity: 1),
     );
     return existingItem.quantity;
   }
 
   bool removeItem(String productId) {
+
     final existingIndex = _items.indexWhere((item) => item.product.id == productId);
+
+    final existingIndex =
+        _items.indexWhere((item) => item.product.id == productId);
+
     if (existingIndex >= 0) {
       _items.removeAt(existingIndex);
       notifyListeners();
@@ -65,7 +77,11 @@ class Cart extends ChangeNotifier {
   }
 
   void resetProductQuantity(String productId) {
+
     final existingIndex = _items.indexWhere((item) => item.product.id == productId);
+
+    final existingIndex =
+        _items.indexWhere((item) => item.product.id == productId);
     if (existingIndex >= 0) {
       _items[existingIndex].quantity = 1;
     }

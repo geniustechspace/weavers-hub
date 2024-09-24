@@ -5,6 +5,8 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class VendorAcceptedOrdersPage extends StatelessWidget {
   const VendorAcceptedOrdersPage({Key? key}) : super(key: key);
+  const VendorAcceptedOrdersPage({super.key});
+
 
   @override
   Widget build(BuildContext context) {
