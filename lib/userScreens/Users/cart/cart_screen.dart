@@ -14,6 +14,7 @@ import '../../../services/order_summery_dialog.dart';
 import '../landingPage/landing_page.dart';
 import 'cart.dart';
 import 'package:http/http.dart' as http;
+
 // <<<<<<< HEAD:lib/DashBoard/Users/users-cart/cartScreen.dart
 // import 'package:provider/provider.dart';
 // import '../../../services/cart_summery.dart';
@@ -30,6 +31,7 @@ import 'package:http/http.dart' as http;
 // >>>>>>> 22d39f7a30da42f76d2ddc775f07a725d984befc:lib/user_screens/Users/users-cart/cart_screen.dart
 // import 'cart.dart';
 
+
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
 
@@ -38,10 +40,14 @@ class CartScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+
+        title: const Text('Your Cart', style: TextStyle(color: Colors.white),),
+
         title: const Text(
           'Your Cart',
           style: TextStyle(color: Colors.white),
         ),
+
         backgroundColor: Colors.green,
       ),
       body: Container(
@@ -70,8 +76,12 @@ class _EmptyCartView extends StatelessWidget {
     return const Center(
       child: Text(
         'Your cart is empty!',
+
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey),
+
         style: TextStyle(
             fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey),
+
       ),
     );
   }
@@ -107,15 +117,23 @@ class _CartContent extends StatelessWidget {
     );
   }
 
+
+  void _showOrderSummary(BuildContext context, Cart cart, CartSummary cartSummary) {
+
   void _showOrderSummary(
       BuildContext context, Cart cart, CartSummary cartSummary) {
+
     showDialog(
       context: context,
       builder: (BuildContext context) => OrderSummaryDialog(
         cart: cart,
         cartSummary: cartSummary,
+
+        onConfirm: () => _processPayment(context, cart, cartSummary.amountToPay),
+
         onConfirm: () =>
             _processPayment(context, cart, cartSummary.amountToPay),
+
       ),
     );
   }
@@ -127,8 +145,12 @@ class _CartContent extends StatelessWidget {
         context: context,
         email: user.email!,
         amount: amount,
+
+        onSuccess: (String reference) => _handleSuccessfulPayment(context, cart, reference),
+
         onSuccess: (String reference) =>
             _handleSuccessfulPayment(context, cart, reference),
+
         onFailure: () => _handleFailedPayment(context),
       );
     }
@@ -175,19 +197,28 @@ class _CartContent extends StatelessWidget {
   //   }
   // }
 
+
+  void _handleSuccessfulPayment(BuildContext context, Cart cart, String reference) async {
+
   void _handleSuccessfulPayment(
       BuildContext context, Cart cart, String reference) async {
     final notificationService = NotificationService();
     try {
       await OrderService().createOrder(cart, reference);
       cart.clear();
+
+
       // ignore: use_build_context_synchronously
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Order placed successfully!')),
       );
       Get.to(const NavigationHome());
     } catch (e) {
+
+
       // ignore: use_build_context_synchronously
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error placing order: $e')),
       );
@@ -219,19 +250,32 @@ class _CartItemCard extends StatelessWidget {
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: CachedNetworkImage(
+
+              imageUrl:  item.product['image_url'],
+
               imageUrl: item.product['image_url'],
+
               width: 60,
               height: 60,
               fit: BoxFit.cover,
               placeholder: (context, url) => const CircularProgressIndicator(),
               errorWidget: (context, url, error) => const Icon(Icons.error)),
+
+
+        ),
+        title: Text(item.product['name'], style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+
         ),
         title: Text(item.product['name'],
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 5),
+            Text('Price: GHC ${item.product['price']}', style: const TextStyle(color: Colors.deepPurple)),
+            const SizedBox(height: 5),
+            Text('Quantity: ${item.quantity}', style: const TextStyle(color: Colors.grey)),
             Text('Price: GHC ${item.product['price']}',
                 style: const TextStyle(color: Colors.deepPurple)),
             const SizedBox(height: 5),
@@ -268,6 +312,15 @@ class _CartSummary extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+
+            Text('Total Items: ${cartSummary.itemCount}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 5),
+            Text('Amount: GHC ${cartSummary.totalAmount}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 5),
+            const Text('Delivery Charge: GHC ${CartSummary.deliveryCharge}', style: TextStyle(color: Colors.grey)),
+            const SizedBox(height: 5),
+            Text('Total: GHC ${cartSummary.amountToPay}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.deepPurple)),
+
             Text('Total Items: ${cartSummary.itemCount}',
                 style:
                     const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
@@ -284,10 +337,18 @@ class _CartSummary extends StatelessWidget {
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.deepPurple)),
+
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: onCheckout,
               style: ElevatedButton.styleFrom(
+
+                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+                backgroundColor: Colors.green,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Text('Checkout', style: TextStyle(fontSize: 16, color: Colors.white)),
+
                 padding:
                     const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
                 backgroundColor: Colors.green,
@@ -296,6 +357,7 @@ class _CartSummary extends StatelessWidget {
               ),
               child: const Text('Checkout',
                   style: TextStyle(fontSize: 16, color: Colors.white)),
+
             ),
           ],
         ),
@@ -306,8 +368,12 @@ class _CartSummary extends StatelessWidget {
 
 CartSummary _calculateCartSummary(Cart cart) {
   int itemCount = cart.items.length;
+
+  double totalAmount = cart.items.fold(0, (sum, item) => sum + item.product['price'] * item.quantity);
+
   double totalAmount = cart.items
       .fold(0, (sum, item) => sum + item.product['price'] * item.quantity);
+
   return CartSummary(itemCount: itemCount, totalAmount: totalAmount);
 
 }
@@ -321,16 +387,21 @@ class PaymentService {
     required VoidCallback onFailure,
   }) async {
     final uniqueTransRef = PayWithPayStack().generateUuidV4();
+
+    await FirebaseFirestore.instance.collection('orders').doc(uniqueTransRef).set({
+
     await FirebaseFirestore.instance
         .collection('orders')
         .doc(uniqueTransRef)
         .set({
+
       'status': 'pending',
       'createdAt': FieldValue.serverTimestamp(),
       'userId': FirebaseAuth.instance.currentUser?.uid,
     });
 
     PayWithPayStack().now(
+
       // ignore: use_build_context_synchronously
       context: context,
       secretKey: "sk_test_fc20a32819750f37fbf5177e193a76455bdecca2",
@@ -356,8 +427,12 @@ class PaymentService {
     final response = await http.get(
       Uri.parse("https://api.paystack.co/transaction/verify/$reference"),
       headers: {
+
+        'Authorization': 'Bearer sk_test_fc20a32819750f37fbf5177e193a76455bdecca2',
+
         'Authorization':
             'Bearer sk_test_fc20a32819750f37fbf5177e193a76455bdecca2',
+
       },
     );
 
@@ -385,6 +460,17 @@ class OrderService {
 
       Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
 
+
+      List<Map<String, dynamic>> productsBought = cart.items.map((
+          CartItem item) =>
+      {
+        'userId': item.product['userId'],
+        'name': item.product['name'],
+        'price': item.product['price'],
+        'image_url': item.product['image_url'],
+        'quantity': item.quantity,
+      }).toList();
+
       List<Map<String, dynamic>> productsBought = cart.items
           .map((CartItem item) => {
                 'userId': item.product['userId'],
@@ -394,6 +480,7 @@ class OrderService {
                 'quantity': item.quantity,
               })
           .toList();
+
 
       double totalAmount = cart.getTotalAmount();
       const double deliveryCharge = 10.0;
@@ -410,9 +497,17 @@ class OrderService {
         'itemsCount': cart.items.length,
         'orderDate': FieldValue.serverTimestamp(),
         'status': true,
+
+        'isDelivered': true,
+
+
         'acceptOrder': false,
         'userId': user.uid,
       };
+
+
+      DocumentReference orderRef = FirebaseFirestore.instance.collection(
+          'orders').doc(reference);
 
       DocumentReference orderRef =
           FirebaseFirestore.instance.collection('orders').doc(reference);
@@ -444,3 +539,4 @@ class OrderService {
   }
 }
 // >>>>>>> 22d39f7a30da42f76d2ddc775f07a725d984befc:lib/user_screens/Users/users-cart/cart_screen.dart
+
