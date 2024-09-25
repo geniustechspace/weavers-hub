@@ -13,9 +13,15 @@ class NavigationHome extends StatefulWidget {
 
 class _NavigationHomeState extends State<NavigationHome> {
   int currentIndex = 0;
+
+
+  List<Widget> screens = [
+    const MarketPlace(),
+
   List<Widget> screens = [
 
      const MarketPlace(),
+
     const MyOrders(),
 
   ];
