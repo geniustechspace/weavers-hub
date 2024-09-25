@@ -39,7 +39,7 @@ class UserProductsPage extends StatelessWidget {
 }
 
 class UserProductsList extends StatelessWidget {
-  const UserProductsList({Key? key}) : super(key: key);
+  const UserProductsList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +102,7 @@ class UserProductsList extends StatelessWidget {
 
 class ProductCard extends StatelessWidget {
   final QueryDocumentSnapshot product;
-  const ProductCard({Key? key, required this.product}) : super(key: key);
+  const ProductCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {

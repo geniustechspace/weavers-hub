@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 import '../userScreens/Users/cart/cart.dart';
 import 'notification_service.dart';
 
@@ -51,7 +50,7 @@ class OrderService {
       );
     } catch (e) {
       print("Error creating order: $e");
-      throw e;
+      rethrow;
     }
   }
 
@@ -132,4 +131,3 @@ class OrderService {
     }
   }
 }
-

@@ -1,11 +1,9 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotificationService {
   final String _baseUrl = 'https://weavers-hub.onrender.com/send-notification/';
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   Future<void> sendNotification({
     required String receiverUserId,
@@ -18,7 +16,7 @@ class NotificationService {
       // String? token = await _firebaseMessaging.getToken();
 
       if (receiverToken == null) {
-        print('Receiver FCM token not found');
+        // print('Receiver FCM token not found');
         return;
       }
 
@@ -39,13 +37,13 @@ class NotificationService {
       );
 
       if (response.statusCode == 200) {
-        print('Notification sent successfully');
+        // print('Notification sent successfully');
       } else {
-        print('Failed to send notification. Status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
+        // print('Failed to send notification. Status code: ${response.statusCode}');
+        // print('Response body: ${response.body}');
       }
     } catch (e) {
-      print('Error sending notification: $e');
+      // print('Error sending notification: $e');
     }
   }
 
@@ -60,7 +58,7 @@ class NotificationService {
         return userDoc.get('fcmToken') as String?;
       }
     } catch (e) {
-      print('Error fetching FCM token: $e');
+      // print('Error fetching FCM token: $e');
     }
     return null;
   }

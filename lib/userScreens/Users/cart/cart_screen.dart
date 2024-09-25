@@ -9,7 +9,6 @@ import 'package:pay_with_paystack/pay_with_paystack.dart';
 import 'package:provider/provider.dart';
 
 import '../../../services/cart_summery.dart';
-import '../../../services/notification_service.dart';
 import '../../../services/order_summery_dialog.dart';
 import '../landingPage/landing_page.dart';
 import 'cart.dart';
@@ -79,8 +78,6 @@ class _EmptyCartView extends StatelessWidget {
 
 class _CartContent extends StatelessWidget {
   final Cart cart;
-
-
 
   const _CartContent({required this.cart});
 
@@ -177,7 +174,6 @@ class _CartContent extends StatelessWidget {
 
   void _handleSuccessfulPayment(
       BuildContext context, Cart cart, String reference) async {
-    final notificationService = NotificationService();
     try {
       await OrderService().createOrder(cart, reference);
       cart.clear();
@@ -193,7 +189,6 @@ class _CartContent extends StatelessWidget {
       );
     }
   }
-
 
   void _handleFailedPayment(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -309,7 +304,6 @@ CartSummary _calculateCartSummary(Cart cart) {
   double totalAmount = cart.items
       .fold(0, (sum, item) => sum + item.product['price'] * item.quantity);
   return CartSummary(itemCount: itemCount, totalAmount: totalAmount);
-
 }
 
 class PaymentService {
@@ -438,8 +432,8 @@ class OrderService {
         });
       }
     } catch (e) {
-      print("Error creating order: $e");
-      throw e;
+      // print("Error creating order: $e");
+      rethrow;
     }
   }
 }
