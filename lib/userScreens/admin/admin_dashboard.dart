@@ -327,7 +327,7 @@ class VendorDetailsBottomSheet extends StatelessWidget {
         'isVendorApproved': false
 
 
-        'isVendorApproved': false,
+        // 'isVendorApproved': false,
 
       });
 

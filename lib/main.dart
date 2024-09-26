@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
-import 'package:weavershub/services/fcm_services.dart';
 import 'package:weavershub/splashScreen/splash.dart';
 import 'package:weavershub/userScreens/Users/cart/cart.dart';
 
@@ -15,8 +14,8 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  FCMService fcmService = FCMService();
-  await fcmService.init();
+  // FCMService fcmService = FCMService();
+  // await fcmService.init();
 
   runApp(ChangeNotifierProvider(
     create: (context) => Cart(),

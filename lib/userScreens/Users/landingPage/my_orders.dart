@@ -78,7 +78,7 @@ class MyOrders extends StatelessWidget {
                                   'Order #$orderId',
                                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                                 ),
-                                _buildStatusChip(orderData['status']),
+                                _buildStatusChip(orderData['status'] ?? false),
                               ],
                             ),
                             const SizedBox(height: 8),

@@ -4,7 +4,7 @@ class CustomLoader extends StatefulWidget {
   final double size;
   final Color color;
 
-  const CustomLoader({super.key, this.size = 50.0, this.color = Colors.blue});
+  const CustomLoader({super.key, this.size = 50.0, this.color = Colors.green});
 
   @override
   // ignore: library_private_types_in_public_api
@@ -63,7 +63,10 @@ class _LoaderPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     canvas.drawArc(
-      Rect.fromCircle(center: Offset(size.width / 2, size.height / 2), radius: size.width / 2),
+      Rect.fromCircle(
+          center: Offset(size.width / 2,
+              size.height / 2),
+          radius: size.width / 2),
       0,
       3.14,
       false,
@@ -72,5 +75,9 @@ class _LoaderPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(
+      covariant
+      CustomPainter
+      oldDelegate
+      ) => false;
 }

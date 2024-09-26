@@ -6,13 +6,6 @@ import '../userScreens/Users/cart/cart.dart';
 
 
 
-
-
-
-import '../userScreens/Users/cart/cart.dart';
-
-
-
 class OrderSummaryItem extends StatelessWidget {
   final CartItem item;
 

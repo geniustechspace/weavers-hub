@@ -17,12 +17,7 @@ class _NavigationHomeState extends State<NavigationHome> {
 
   List<Widget> screens = [
     const MarketPlace(),
-
-  List<Widget> screens = [
-
-     const MarketPlace(),
-
-    const MyOrders(),
+     const MyOrders(),
 
   ];
 

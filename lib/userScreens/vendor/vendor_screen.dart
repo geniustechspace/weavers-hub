@@ -8,7 +8,6 @@ import 'package:weavershub/userScreens/vendor/vendor_products_page.dart';
 
 import '../../DashBoard/vendor/vendor_orders_page.dart';
 import '../../DashBoard/vendor/view_accepted_orders.dart';
-import '../../services/notification_service.dart';
 
 class VendorDashboard extends StatelessWidget {
   const VendorDashboard({super.key});
@@ -38,7 +37,6 @@ class VendorDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final notificationService = NotificationService();
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
