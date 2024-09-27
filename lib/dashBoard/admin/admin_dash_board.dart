@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:weavershub/DashBoard/admin/accept_vendors.dart';
 
+import 'admin_orders_page.dart';
+
 class AdminDashBoard extends StatefulWidget {
   const AdminDashBoard({super.key});
 
@@ -116,11 +118,23 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Get.to(const AcceptVendors()),
-        label: const Text("Accept Vendors", style: TextStyle(color: Colors.white),),
-        icon: const Icon(Icons.person_add, color: Colors.white,),
-        backgroundColor: const Color(0xFF37B943),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton.extended(
+            onPressed: () => Get.to(const AdminOrdersPage()),
+            label: const Text("All Orders", style: TextStyle(color: Colors.white),),
+            icon: const Icon(Icons.shopping_cart, color: Colors.white,),
+            backgroundColor: const Color(0xFF37B943),
+          ),
+const SizedBox(height: 20,),
+          FloatingActionButton.extended(
+            onPressed: () => Get.to(const AcceptVendors()),
+            label: const Text("Accept Vendors", style: TextStyle(color: Colors.white),),
+            icon: const Icon(Icons.person_add, color: Colors.white,),
+            backgroundColor: const Color(0xFF37B943),
+          ),
+        ],
       ),
     );
   }

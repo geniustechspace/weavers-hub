@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:intl/intl.dart';
 
+import '../../../services/notification_service.dart';
+
 
 class MyOrders extends StatefulWidget {
   const MyOrders({super.key});
@@ -67,13 +69,14 @@ class _MyOrdersState extends State<MyOrders> {
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-
+                final orderDoc = snapshot.data!.docs[index];
                 final orderData =
-                    snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                    orderDoc.data() as Map<String, dynamic>;
 
                 // final orderData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
                 final totalAmount = orderData['totalAmount'] as double;
                 final itemsCount = orderData['itemsCount'] as int;
+
 
                 Timestamp timestamp = orderData['orderDate'] as Timestamp;
                 DateTime dateTime = timestamp.toDate();
@@ -85,11 +88,11 @@ class _MyOrdersState extends State<MyOrders> {
                     snapshot.data!.docs[index].id.substring(0, 5).toUpperCase();
 
                 return Card(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   elevation: 4,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: InkWell(
                     onTap: () => _showOrderDetails(context, orderData),
                     child: Padding(
@@ -97,27 +100,51 @@ class _MyOrdersState extends State<MyOrders> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Order ID and Status Row
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 'Order #$orderId',
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Colors.black87,
+                                ),
                               ),
                               _buildStatusChip(orderData['status']),
                             ],
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            'Placed $timeAgo',
-                            style: TextStyle(color: Colors.grey[600]),
+
+                          // Time and Date Info
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.access_time,
+                                color: Colors.grey[600],
+                                size: 16,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Placed $timeAgo',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
                           Text(
                             formattedDate,
-                            style: TextStyle(color: Colors.grey[600]),
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 14,
+                            ),
                           ),
                           const SizedBox(height: 12),
+
+                          // Total Amount
                           Text(
                             'GHC ${totalAmount.toStringAsFixed(2)}',
                             style: TextStyle(
@@ -126,25 +153,53 @@ class _MyOrdersState extends State<MyOrders> {
                               fontSize: 16,
                             ),
                           ),
+                          const SizedBox(height: 12),
+
+                          // Items Count, Checkbox, and Delivery Status Row
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                  '$itemsCount ${itemsCount == 1 ? 'item' : 'items'}'),
                               Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  _buildAcceptanceStatusChip(
-                                      orderData['acceptOrder'] ?? false),
-                                  // Row(
-                                  //   children: [
-                                  //     const Text(
-                                  //       "Has item been delivered?",
-                                  //       style: TextStyle(fontSize: 10),
-                                  //     ),
-                                  //     productDeliveredChip(orderData['isDelivered'],
-                                  //     updateOrderStatus, snapshot.data!.docs[index].id)
-                                  //   ],
-                                  // ),
+                                  Text(
+                                    '$itemsCount ${itemsCount == 1 ? 'item' : 'items'}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  if(!orderData['acceptOrder'])
+                                  Card(
+                                    margin: const EdgeInsets.only(top: 8),
+                                    elevation: 2,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4),
+                                      child: Checkbox(
+                                        activeColor: Colors.green,
+                                        value: orderData['acceptOrder'] ?? false,
+                                        onChanged: (bool? value) {
+                                          _updateOrderStatus(
+                                            context,
+                                            orderDoc.reference,
+                                            value ?? false,
+                                            orderData['userId'],
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              // Delivery Status
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  _buildAcceptanceStatusChip(orderData['isDelivered'] ?? false),
                                 ],
                               ),
                             ],
@@ -154,9 +209,179 @@ class _MyOrdersState extends State<MyOrders> {
                     ),
                   ),
                 );
+
+
+                // return Card(
+                //   margin:
+                //       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                //   elevation: 4,
+                //   shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(12)),
+                //   child: InkWell(
+                //     onTap: () => _showOrderDetails(context, orderData),
+                //     child: Padding(
+                //       padding: const EdgeInsets.all(16),
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           Row(
+                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //             children: [
+                //               Text(
+                //                 'Order #$orderId',
+                //                 style: const TextStyle(
+                //                     fontWeight: FontWeight.bold, fontSize: 18),
+                //               ),
+                //               _buildStatusChip(orderData['status']),
+                //             ],
+                //           ),
+                //           const SizedBox(height: 8),
+                //           Text(
+                //             'Placed $timeAgo',
+                //             style: TextStyle(color: Colors.grey[600]),
+                //           ),
+                //           Text(
+                //             formattedDate,
+                //             style: TextStyle(color: Colors.grey[600]),
+                //           ),
+                //           const SizedBox(height: 12),
+                //           Text(
+                //             'GHC ${totalAmount.toStringAsFixed(2)}',
+                //             style: TextStyle(
+                //               color: Colors.green[700],
+                //               fontWeight: FontWeight.bold,
+                //               fontSize: 16,
+                //             ),
+                //           ),
+                //           Row(
+                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //             children: [
+                //               Column(
+                //                 children: [
+                //                   Text(
+                //                       '$itemsCount ${itemsCount == 1 ? 'item' : 'items'}'),
+                //                   Card(
+                //                     elevation: 5,
+                //                     surfaceTintColor: Colors.green,
+                //                     child: Checkbox(
+                //                       activeColor: Colors.green,
+                //                       value: orderData['acceptOrder'] ?? false,
+                //                       onChanged: (bool? value) {
+                //                         _updateOrderStatus(context, orderDoc.reference,
+                //                             value ?? false, orderData['userId']);
+                //                       },
+                //                     ),
+                //                   ),
+                //                 ],
+                //               ),
+                //
+                //               Column(
+                //                 children: [
+                //
+                //                   _buildAcceptanceStatusChip(
+                //                       orderData['isDelivered'] ?? false),
+                //                   // Row(
+                //                   //   children: [
+                //                   //     const Text(
+                //                   //       "Has item been delivered?",
+                //                   //       style: TextStyle(fontSize: 10),
+                //                   //     ),
+                //                   //     productDeliveredChip(orderData['isDelivered'],
+                //                   //     updateOrderStatus, snapshot.data!.docs[index].id)
+                //                   //   ],
+                //                   // ),
+                //                 ],
+                //               ),
+                //             ],
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // );
               },
             );
           },
+        ),
+      ),
+    );
+  }
+
+  void _updateOrderStatus(
+      BuildContext context, // add context parameter here
+      DocumentReference orderRef, bool accepted, String receiverId) {
+
+    final notificationService = NotificationService();
+    final user = FirebaseAuth.instance.currentUser;
+
+    orderRef.update({'acceptOrder': accepted}).then((_) async {
+      String orderId = orderRef.id;
+
+      // Retrieve order data
+      DocumentSnapshot orderSnapshot = await orderRef.get();
+      Map<String, dynamic> orderData = orderSnapshot.data() as Map<String, dynamic>;
+      String buyerId = orderData['userId'];
+
+      // Update the 'acceptOrder' field again if necessary (though this is repetitive)
+      await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(orderId)
+          .update({'acceptOrder': accepted});
+
+      // Querying and updating collectionGroup
+      FirebaseFirestore.instance
+          .collectionGroup('sellerOrders')
+          .where('userId', isEqualTo: user?.uid)
+          .get()
+          .then((querySnapshot) {
+        for (var doc in querySnapshot.docs) {
+          doc.reference.update({'acceptOrder': accepted});
+        }
+      });
+
+      // Notify the user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(accepted ? "You've confirm that your order has been received": ' '),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+
+      // Send notification to the buyer
+      await notificationService.sendNotification(
+        receiverUserId: buyerId,
+        title: accepted ? 'Order Accepted' : 'Order Updated',
+        body: accepted
+            ? 'Your order #$orderId has been accepted by the vendor!'
+            : 'Your order #$orderId has been updated.',
+      );
+    }).catchError((error) {
+
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update order status: $error'),
+          duration: const Duration(seconds: 50),
+        ),
+      );
+
+    });
+  }
+
+
+
+  Widget _buildStatusChip(bool status) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: status ? Colors.green[100] : Colors.orange[100],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        status ? 'Completed' : 'Pending',
+        style: TextStyle(
+          color: status ? Colors.green[700] : Colors.orange[700],
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -335,22 +560,22 @@ class _MyOrdersState extends State<MyOrders> {
     );
   }
 
-  Widget _buildStatusChip(bool status) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: status ? Colors.green[100] : Colors.orange[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        status ? 'Completed' : 'Pending',
-        style: TextStyle(
-          color: status ? Colors.green[700] : Colors.orange[700],
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
+  // Widget _buildStatusChip(bool status) {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+  //     decoration: BoxDecoration(
+  //       color: status ? Colors.green[100] : Colors.orange[100],
+  //       borderRadius: BorderRadius.circular(12),
+  //     ),
+  //     child: Text(
+  //       status ? 'Completed' : 'Pending',
+  //       style: TextStyle(
+  //         color: status ? Colors.green[700] : Colors.orange[700],
+  //         fontWeight: FontWeight.bold,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData) {
     showModalBottomSheet(

@@ -16,21 +16,7 @@ import '../landingPage/landing_page.dart';
 import 'cart.dart';
 
 
-// <<<<<<< HEAD:lib/DashBoard/Users/users-cart/cartScreen.dart
-// import 'package:provider/provider.dart';
-// import '../../../services/cart_summery.dart';
-// import '../../../services/notification_service.dart';
-// import '../../../services/order_services.dart';
-// import '../../../services/order_summery_dialog.dart';
-// import '../../../services/payment_service.dart';
-// import '../landing-page/landing-page.dart';
-// =======
-// import 'package:pay_with_paystack/pay_with_paystack.dart';
-// import 'package:provider/provider.dart';
-//
-// import '../landing_page/landing_page.dart';
-// >>>>>>> 22d39f7a30da42f76d2ddc775f07a725d984befc:lib/user_screens/Users/users-cart/cart_screen.dart
-// import 'cart.dart';
+
 
 
 class CartScreen extends StatelessWidget {
@@ -44,10 +30,6 @@ class CartScreen extends StatelessWidget {
 
         title: const Text('Cart', style: TextStyle(color: Colors.white),),
 
-        // title: const Text(
-        //   'Your Cart',
-        //   style: TextStyle(color: Colors.white),
-        // ),
 
         backgroundColor: Colors.green,
       ),
@@ -537,8 +519,6 @@ CartSummary _calculateCartSummary(Cart cart) {
 //       rethrow;
 //     }
 //   }
-// }
 
-// >>>>>>> 22d39f7a30da42f76d2ddc775f07a725d984befc:lib/user_screens/Users/users-cart/cart_screen.dart
 
   
