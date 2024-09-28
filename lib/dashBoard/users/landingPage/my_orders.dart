@@ -16,11 +16,9 @@ class MyOrders extends StatefulWidget {
 }
 
 class _MyOrdersState extends State<MyOrders> {
-  // bool _isEnabled = true;
+
   @override
 
-// class MyOrders extends StatelessWidget {
-//   const MyOrders({super.key});
 
   Widget build(BuildContext context) {
     final User? currentUser = FirebaseAuth.instance.currentUser;
@@ -33,8 +31,6 @@ class _MyOrdersState extends State<MyOrders> {
           'My Orders',
           style: TextStyle(color: Colors.white),
         ),
-
-        // title: const Text('My Orders', style: TextStyle(color: Colors.white),),
 
         elevation: 0,
         backgroundColor: Colors.green,
@@ -73,7 +69,6 @@ class _MyOrdersState extends State<MyOrders> {
                 final orderData =
                     orderDoc.data() as Map<String, dynamic>;
 
-                // final orderData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
                 final totalAmount = orderData['totalAmount'] as double;
                 final itemsCount = orderData['itemsCount'] as int;
 
@@ -180,7 +175,7 @@ class _MyOrdersState extends State<MyOrders> {
                                       padding: const EdgeInsets.all(4),
                                       child: Checkbox(
                                         activeColor: Colors.green,
-                                        value: orderData['acceptOrder'] ?? false,
+                                        value: orderData['isDelivered'] ?? false,
                                         onChanged: (bool? value) {
                                           _updateOrderStatus(
                                             context,
@@ -192,6 +187,8 @@ class _MyOrdersState extends State<MyOrders> {
                                       ),
                                     ),
                                   ),
+
+
                                 ],
                               ),
 
@@ -199,7 +196,7 @@ class _MyOrdersState extends State<MyOrders> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  _buildAcceptanceStatusChip(orderData['isDelivered'] ?? false),
+                                  _buildAcceptanceStatusChip(orderData['acceptOrder'] ?? false),
                                 ],
                               ),
                             ],
@@ -209,96 +206,6 @@ class _MyOrdersState extends State<MyOrders> {
                     ),
                   ),
                 );
-
-
-                // return Card(
-                //   margin:
-                //       const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                //   elevation: 4,
-                //   shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(12)),
-                //   child: InkWell(
-                //     onTap: () => _showOrderDetails(context, orderData),
-                //     child: Padding(
-                //       padding: const EdgeInsets.all(16),
-                //       child: Column(
-                //         crossAxisAlignment: CrossAxisAlignment.start,
-                //         children: [
-                //           Row(
-                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //             children: [
-                //               Text(
-                //                 'Order #$orderId',
-                //                 style: const TextStyle(
-                //                     fontWeight: FontWeight.bold, fontSize: 18),
-                //               ),
-                //               _buildStatusChip(orderData['status']),
-                //             ],
-                //           ),
-                //           const SizedBox(height: 8),
-                //           Text(
-                //             'Placed $timeAgo',
-                //             style: TextStyle(color: Colors.grey[600]),
-                //           ),
-                //           Text(
-                //             formattedDate,
-                //             style: TextStyle(color: Colors.grey[600]),
-                //           ),
-                //           const SizedBox(height: 12),
-                //           Text(
-                //             'GHC ${totalAmount.toStringAsFixed(2)}',
-                //             style: TextStyle(
-                //               color: Colors.green[700],
-                //               fontWeight: FontWeight.bold,
-                //               fontSize: 16,
-                //             ),
-                //           ),
-                //           Row(
-                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //             children: [
-                //               Column(
-                //                 children: [
-                //                   Text(
-                //                       '$itemsCount ${itemsCount == 1 ? 'item' : 'items'}'),
-                //                   Card(
-                //                     elevation: 5,
-                //                     surfaceTintColor: Colors.green,
-                //                     child: Checkbox(
-                //                       activeColor: Colors.green,
-                //                       value: orderData['acceptOrder'] ?? false,
-                //                       onChanged: (bool? value) {
-                //                         _updateOrderStatus(context, orderDoc.reference,
-                //                             value ?? false, orderData['userId']);
-                //                       },
-                //                     ),
-                //                   ),
-                //                 ],
-                //               ),
-                //
-                //               Column(
-                //                 children: [
-                //
-                //                   _buildAcceptanceStatusChip(
-                //                       orderData['isDelivered'] ?? false),
-                //                   // Row(
-                //                   //   children: [
-                //                   //     const Text(
-                //                   //       "Has item been delivered?",
-                //                   //       style: TextStyle(fontSize: 10),
-                //                   //     ),
-                //                   //     productDeliveredChip(orderData['isDelivered'],
-                //                   //     updateOrderStatus, snapshot.data!.docs[index].id)
-                //                   //   ],
-                //                   // ),
-                //                 ],
-                //               ),
-                //             ],
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // );
               },
             );
           },
@@ -322,7 +229,6 @@ class _MyOrdersState extends State<MyOrders> {
       Map<String, dynamic> orderData = orderSnapshot.data() as Map<String, dynamic>;
       String buyerId = orderData['userId'];
 
-      // Update the 'acceptOrder' field again if necessary (though this is repetitive)
       await FirebaseFirestore.instance
           .collection('orders')
           .doc(orderId)
@@ -421,112 +327,6 @@ class _MyOrdersState extends State<MyOrders> {
     // You might want to show a success message or update other parts of your UI here
   }
 
-// Usage example
-// productDeliveredChip(orderData['isDelivered'], updateOrderStatus, orderId)
-  // Widget _productDeliveredChip(bool isEnabled, Function updateOrderStatus) {
-  //   return ElevatedButton(
-  //     onPressed:  () {
-  //             setState(() {
-  //               isEnabled = false;
-  //
-  //             });
-  //             // Call the function to update order status
-  //             updateOrderStatus(orderId,orderData['isDelivered']);
-  //           }
-  //         ,
-  //     style: ElevatedButton.styleFrom(
-  //       foregroundColor: Colors.white,
-  //       backgroundColor: isEnabled ? Colors.green[700] : Colors.grey,
-  //       minimumSize: const Size(25, 25),
-  //       padding: const EdgeInsets.all(0),
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(5),
-  //       ),
-  //     ),
-  //     child: Icon(
-  //       isEnabled ? Icons.check_box_outline_blank : Icons.check_box,
-  //       size: 15,
-  //     ),
-  //   );
-  // }
-  //
-  // void _updateOrderStatus(String orderId, bool isDelivered) async {
-  //   // Update the database
-  //   await FirebaseFirestore.instance
-  //       .collection('orders')
-  //       .doc(orderId)
-  //       .update({'isDelivered': isDelivered});
-  //
-  //   // You might want to show a success message or update other parts of your UI here
-  // }
-
-                // final orderId = snapshot.data!.docs[index].id.substring(0, 5).toUpperCase();
-
-                //  return Card(
-                //     margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                //     elevation: 4,
-                //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                //     child: InkWell(
-                //       onTap: () => _showOrderDetails(context, orderData),
-                //       child: Padding(
-                //         padding: const EdgeInsets.all(16),
-                //         child: Column(
-                //           crossAxisAlignment: CrossAxisAlignment.start,
-                //           children: [
-                //             Row(
-                //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //               children: [
-                //                 Text(
-                //                   'Order #$orderId',
-                //                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                //                 ),
-                //                 _buildStatusChip(orderData['status']),
-                //               ],
-                //             ),
-                //             const SizedBox(height: 8),
-                //             Text(
-                //               'Placed $timeAgo',
-                //               style: TextStyle(color: Colors.grey[600]),
-                //             ),
-                //             Text(
-                //               formattedDate,
-                //               style: TextStyle(color: Colors.grey[600]),
-                //             ),
-                //             const SizedBox(height: 12),
-                //             Text(
-                //               'GHC ${totalAmount.toStringAsFixed(2)}',
-                //               style: TextStyle(
-                //                 color: Colors.green[700],
-                //                 fontWeight: FontWeight.bold,
-                //                 fontSize: 16,
-                //               ),
-                //             ),
-                //             Row(
-                //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //               children: [
-                //                 Text('$itemsCount ${itemsCount == 1 ? 'item' : 'items'}'),
-                //                 Column(
-                //                   children: [
-                //                     _buildAcceptanceStatusChip(orderData['acceptOrder'] ?? false),
-                //                   ],
-                //                 ),
-
-                //               ],
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //     ),
-                //   );
-               
-            
-          // },
-        
-      
-    
-  
-
-
   Widget _buildAcceptanceStatusChip(bool accepted) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -559,23 +359,6 @@ class _MyOrdersState extends State<MyOrders> {
       ),
     );
   }
-
-  // Widget _buildStatusChip(bool status) {
-  //   return Container(
-  //     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-  //     decoration: BoxDecoration(
-  //       color: status ? Colors.green[100] : Colors.orange[100],
-  //       borderRadius: BorderRadius.circular(12),
-  //     ),
-  //     child: Text(
-  //       status ? 'Completed' : 'Pending',
-  //       style: TextStyle(
-  //         color: status ? Colors.green[700] : Colors.orange[700],
-  //         fontWeight: FontWeight.bold,
-  //       ),
-  //     ),
-  //   );
-  // }
 
   void _showOrderDetails(BuildContext context, Map<String, dynamic> orderData) {
     showModalBottomSheet(
@@ -623,34 +406,6 @@ class _MyOrdersState extends State<MyOrders> {
             ),
           ),
         );
-        return  Container(
-          padding: const EdgeInsets.all(20),
-          child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text("Order Details", style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
-                  const Divider(),
-                  _buildDetailRow('Date', '$formattedDate ($timeAgo)'),
-                  _buildDetailRow('Total Amount', 'GHC ${orderData['totalAmount']}'),
-                  _buildDetailRow('Delivery Charge', 'GHC ${orderData['deliveryCharge']}'),
-                  _buildDetailRow('Items Count', '${orderData['itemsCount']}'),
-                  _buildDetailRow('Customer', orderData['userName']),
-                  _buildDetailRow('Location', orderData['location']),
-                  _buildDetailRow('Phone', orderData['phone']),
-                  _buildDetailRow('Email', orderData['email']),
-                  _buildDetailRow('Status', orderData['status'] ? 'Completed' : 'Pending'),
-                  const SizedBox(height: 16),
-                  const Text('Products:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  const SizedBox(height: 8),
-                  ..._buildProductList(orderData['products']),
-                ],
-              ),
-            ),
-        );
-
-
       },
     );
   }
@@ -686,8 +441,6 @@ class _MyOrdersState extends State<MyOrders> {
 
                 placeholder: (context, url) =>
                     const CircularProgressIndicator(),
-
-                // placeholder: (context, url) => const CircularProgressIndicator(),
 
                 errorWidget: (context, url, error) => const Icon(Icons.error)),
           ),

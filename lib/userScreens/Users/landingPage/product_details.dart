@@ -74,12 +74,16 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               onPressed: _addToCart,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25),
                 ),
               ),
-              child: const Text('Add to Cart',style: TextStyle(color: Colors.white),),
+              child: const Text(
+                'Add to Cart',
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ],
         ),

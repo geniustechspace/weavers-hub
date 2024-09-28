@@ -10,10 +10,10 @@ class UserProductsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('My Products', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        title: const Text('My Products',
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         backgroundColor: Colors.green,
         elevation: 0,
       ),
@@ -29,10 +29,12 @@ class UserProductsPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Get.to(() => const VendorProductCreation());
-
         },
         backgroundColor: Colors.green,
-        child: const Icon(Icons.add, color: Colors.white,),
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
     );
   }
@@ -60,10 +62,13 @@ class UserProductsList extends StatelessWidget {
           .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.red)));
+          return Center(
+              child: Text('Error: ${snapshot.error}',
+                  style: const TextStyle(color: Colors.red)));
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(color: Colors.green));
+          return const Center(
+              child: CircularProgressIndicator(color: Colors.green));
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const Center(
@@ -115,19 +120,21 @@ class ProductCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(12)),
               child: product['image_url'] != null
                   ? Image.network(
-                product['image_url'],
-                height: 120,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              )
+                      product['image_url'],
+                      height: 120,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    )
                   : Container(
-                height: 120,
-                color: Colors.grey[300],
-                child: const Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
-              ),
+                      height: 120,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.image_not_supported,
+                          size: 50, color: Colors.grey),
+                    ),
             ),
             Padding(
               padding: const EdgeInsets.all(12),
@@ -136,14 +143,16 @@ class ProductCard extends StatelessWidget {
                 children: [
                   Text(
                     product['name'],
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '\$${product['price']}',
-                    style: TextStyle(color: Colors.green[700], fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Colors.green[700], fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -185,7 +194,8 @@ class ProductCard extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 product['name'],
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
               Text(
@@ -198,7 +208,8 @@ class ProductCard extends StatelessWidget {
                 children: [
                   Text(
                     'Price: \$${product['price']}',
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     'Quantity: ${product['quantity']}',
@@ -215,7 +226,10 @@ class ProductCard extends StatelessWidget {
                     backgroundColor: Colors.green,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
-                  child: const Text('Close', style: TextStyle(color: Colors.white),),
+                  child: const Text(
+                    'Close',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ],

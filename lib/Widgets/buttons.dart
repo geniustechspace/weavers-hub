@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-
 class CustomTextButton extends StatelessWidget {
   final String buttonName;
 
   final VoidCallback onTap;
 
-
-  const CustomTextButton({super.key,required this.buttonName, required this.onTap});
+  const CustomTextButton(
+      {super.key, required this.buttonName, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -24,23 +23,20 @@ class CustomTextButton extends StatelessWidget {
   }
 }
 
-
-
-
 class CustomButton extends StatelessWidget {
   final String buttonName;
 
   final VoidCallback onTap;
-
 
   const CustomButton(
       {super.key, required this.buttonName, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
+    return
+      ElevatedButton(
       style: ElevatedButton.styleFrom(
-          fixedSize: const Size(300, 50),
+
           backgroundColor: Colors.green,
           foregroundColor: Colors.white,
           elevation: 5,
@@ -51,17 +47,12 @@ class CustomButton extends StatelessWidget {
           ),
           textStyle: const TextStyle(
             fontSize: 20,
-          )
-
-
-      ),
+          )),
       onPressed: onTap,
-
       child: Text(
         buttonName,
         maxLines: 1,
       ),
-
     );
   }
 }

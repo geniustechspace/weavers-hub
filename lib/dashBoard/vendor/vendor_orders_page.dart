@@ -46,7 +46,6 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
               // .collectionGrouion('orders')
               .collectionGroup('sellerOrders')
               .where('userId', isEqualTo: user.uid)
-
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -58,8 +57,6 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
               return const Center(child: Text('No orders found'));
             }
-
-
 
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
@@ -73,8 +70,6 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
                 DateTime dateTime = timestamp.toDate();
                 String timeAgo = timeago.format(dateTime, locale: 'en');
                 String formattedDate = DateFormat('MMM d, y').format(dateTime);
-
-
 
                 return Card(
                   margin:
@@ -108,8 +103,6 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
                             'Date: $formattedDate ($timeAgo)',
                             style: TextStyle(color: Colors.grey[600]),
                           ),
-
-
                           const SizedBox(height: 4),
                           Text(
                             'Total: GHC ${order["totalAmount"]}',
@@ -131,8 +124,11 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
                                       activeColor: Colors.green,
                                       value: order['acceptOrder'] ?? false,
                                       onChanged: (bool? value) {
-                                        _updateOrderStatus(context, orderDoc.reference,
-                                            value ?? false, order['userId']);
+                                        _updateOrderStatus(
+                                            context,
+                                            orderDoc.reference,
+                                            value ?? false,
+                                            order['userId']);
                                       },
                                     ),
                                   ),
@@ -157,8 +153,9 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
 
   void _updateOrderStatus(
       BuildContext context, // add context parameter here
-      DocumentReference orderRef, bool accepted, String receiverId) {
-
+      DocumentReference orderRef,
+      bool accepted,
+      String receiverId) {
     final notificationService = NotificationService();
     final user = FirebaseAuth.instance.currentUser;
 
@@ -167,10 +164,10 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
 
       // Retrieve order data
       DocumentSnapshot orderSnapshot = await orderRef.get();
-      Map<String, dynamic> orderData = orderSnapshot.data() as Map<String, dynamic>;
+      Map<String, dynamic> orderData =
+          orderSnapshot.data() as Map<String, dynamic>;
       String buyerId = orderData['userId'];
 
-      // Update the 'acceptOrder' field again if necessary (though this is repetitive)
       await FirebaseFirestore.instance
           .collection('orders')
           .doc(orderId)
@@ -190,7 +187,8 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
       // Notify the user
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(accepted ? 'Order accepted' : 'Order acceptance cancelled'),
+          content:
+              Text(accepted ? 'Order accepted' : 'Order acceptance cancelled'),
           duration: const Duration(seconds: 1),
         ),
       );
@@ -204,19 +202,14 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
             : 'Your order #$orderId has been updated.',
       );
     }).catchError((error) {
-
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to update order status: $error'),
           duration: const Duration(seconds: 50),
         ),
       );
-
     });
   }
-
-
 
   Widget _buildStatusChip(bool status) {
     return Container(
@@ -234,8 +227,6 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
       ),
     );
   }
-
-
 
   void _showOrderDetails(BuildContext context, Map<String, dynamic> order) {
     showModalBottomSheet(
@@ -255,9 +246,7 @@ class _VendorOrdersPageState extends State<VendorOrdersPage> {
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                 const Divider(),
-                // _buildDetailRow('Product', order["productName"]),
                 _buildDetailRow('Total Amount', 'GHC ${order["totalAmount"]}'),
-                // _buildDetailRow('Quantity', '${order["quantity"]}'),
                 _buildDetailRow('Customer', order['userName']),
                 _buildDetailRow('Location', order['location']),
                 _buildDetailRow('Phone', order['phone']),

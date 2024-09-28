@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-import '../../services/notification_service.dart';
 
 class AdminOrdersPage extends StatefulWidget {
   const AdminOrdersPage({super.key});
@@ -42,7 +41,6 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
         child: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection('orders')
-              // .collectionGroup('sellerOrders')
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -100,14 +98,6 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
                             'Date: $formattedDate ($timeAgo)',
                             style: TextStyle(color: Colors.grey[600]),
                           ),
-                          // const SizedBox(height: 12),
-                          // Text(
-                          //   '${order["productName"]}',
-                          //   style: const TextStyle(
-                          //     fontWeight: FontWeight.w500,
-                          //     fontSize: 16,
-                          //   ),
-                          // ),
                           const SizedBox(height: 4),
                           Text(
                             'Total: GHC ${order["totalAmount"]}',
@@ -116,7 +106,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 20,),
+                          const SizedBox(height: 20,),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -216,9 +206,7 @@ class _AdminOrdersPageState extends State<AdminOrdersPage> {
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                 const Divider(),
-                // _buildDetailRow('Product', order["productName"]),
                 _buildDetailRow('Total Amount', 'GHC ${order["totalAmount"]}'),
-                // _buildDetailRow('Quantity', '${order["quantity"]}'),
                 _buildDetailRow('Customer', order['userName']),
                 _buildDetailRow('Location', order['location']),
                 _buildDetailRow('Phone', order['phone']),

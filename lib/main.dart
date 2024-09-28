@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:weavershub/splashScreen/splash.dart';
 import 'package:weavershub/userScreens/Users/cart/cart.dart';
 
-
 import 'firebase_options.dart';
 
 Future<void> main() async {

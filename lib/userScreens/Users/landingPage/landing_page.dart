@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../dashBoard/users/landingPage/my_orders.dart';
 import 'market_place.dart';
 
-
 class NavigationHome extends StatefulWidget {
   const NavigationHome({super.key});
 
@@ -14,11 +13,9 @@ class NavigationHome extends StatefulWidget {
 class _NavigationHomeState extends State<NavigationHome> {
   int currentIndex = 0;
 
-
   List<Widget> screens = [
     const MarketPlace(),
-     const MyOrders(),
-
+    const MyOrders(),
   ];
 
   @override
@@ -51,7 +48,6 @@ class _NavigationHomeState extends State<NavigationHome> {
             });
           },
           items: const [
-
             BottomNavigationBarItem(
               icon: Icon(Icons.shopping_cart),
               label: 'Market place',

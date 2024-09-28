@@ -11,7 +11,8 @@ class CustomLoader extends StatefulWidget {
   _CustomLoaderState createState() => _CustomLoaderState();
 }
 
-class _CustomLoaderState extends State<CustomLoader> with SingleTickerProviderStateMixin {
+class _CustomLoaderState extends State<CustomLoader>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -64,8 +65,7 @@ class _LoaderPainter extends CustomPainter {
 
     canvas.drawArc(
       Rect.fromCircle(
-          center: Offset(size.width / 2,
-              size.height / 2),
+          center: Offset(size.width / 2, size.height / 2),
           radius: size.width / 2),
       0,
       3.14,
@@ -75,9 +75,5 @@ class _LoaderPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(
-      covariant
-      CustomPainter
-      oldDelegate
-      ) => false;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

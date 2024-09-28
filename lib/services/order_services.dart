@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../userScreens/Users/cart/cart.dart';import 'notification_service.dart';
+import '../userScreens/Users/cart/cart.dart';
+import 'notification_service.dart';
 
 class OrderService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -34,21 +35,12 @@ class OrderService {
       final orderRef = _firestore.collection('orders').doc(reference);
       await orderRef.set(orderData);
 
-      for(var product in productsBought){
-        await orderRef.collection('sellerOrders')
-            .doc(reference).set({...orderData, 'userId':product['userId']});
+      for (var product in productsBought) {
+        await orderRef
+            .collection('sellerOrders')
+            .doc(reference)
+            .set({...orderData, 'userId': product['userId']});
       }
-
-
-      // await _createSellerOrders(
-      //   reference: reference,
-      //   orderRef: orderRef,
-      //   productsBought: productsBought,
-      //   userData: userData,
-      //   amountToPay: amountToPay,
-      //   deliveryCharge: deliveryCharge,
-      //   buyerId: user.uid,
-      // );
 
       await _sendNotifications(
         productsBought: productsBought,
@@ -96,36 +88,6 @@ class OrderService {
       'isDelivered': false,
     };
   }
-
-  // Future<void> _createSellerOrders({
-  //   required String reference,
-  //   required DocumentReference orderRef,
-  //   required List<Map<String, dynamic>> productsBought,
-  //   required Map<String, dynamic> userData,
-  //   required double amountToPay,
-  //   required double deliveryCharge,
-  //   required String buyerId,
-  // }) async {
-  //   for (var product in productsBought) {
-  //     await orderRef.collection('sellerOrders').doc(reference).set({
-  //
-  //       'products': productsBought,
-  //       'userId': product['userId'],
-  //       'userName': userData['name'],
-  //       'buyerId': buyerId,
-  //       'email': userData['email'],
-  //       'orderDate': FieldValue.serverTimestamp(),
-  //       'phone': userData['phone'],
-  //       'location': userData['location'],
-  //       'totalAmount': amountToPay,
-  //       'productName': product['name'],
-  //       'quantity': product['quantity'],
-  //       'deliveryCharge': deliveryCharge,
-  //       'status': true,
-  //       'acceptOrder': false,
-  //     });
-  //   }
-  // }
 
   Future<void> _sendNotifications({
     required List<Map<String, dynamic>> productsBought,

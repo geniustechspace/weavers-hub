@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-
-Future<List<Map<String, dynamic>>> getOrdersByProductUserId(String userId) async {
+Future<List<Map<String, dynamic>>> getOrdersByProductUserId(
+    String userId) async {
   // Reference the 'orders' collection in Firestore
   CollectionReference orders = FirebaseFirestore.instance.collection('orders');
 
