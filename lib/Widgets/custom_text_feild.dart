@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class CustomInputField extends StatefulWidget {
   final String hintText;
   final String? Function(String?)? validator;
@@ -54,16 +53,16 @@ class _CustomInputFieldState extends State<CustomInputField> {
             border: InputBorder.none,
             suffixIcon: widget.showVisibilityToggle
                 ? IconButton(
-              icon: Icon(
-                isObscured ? Icons.visibility_off : Icons.visibility,
-                color: Colors.grey,
-              ),
-              onPressed: () {
-                setState(() {
-                  isObscured = !isObscured;
-                });
-              },
-            )
+                    icon: Icon(
+                      isObscured ? Icons.visibility_off : Icons.visibility,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isObscured = !isObscured;
+                      });
+                    },
+                  )
                 : null,
           ),
           validator: widget.validator,
@@ -72,3 +71,4 @@ class _CustomInputFieldState extends State<CustomInputField> {
     );
   }
 }
+

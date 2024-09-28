@@ -5,8 +5,6 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class VendorAcceptedOrdersPage extends StatelessWidget {
   const VendorAcceptedOrdersPage({Key? key}) : super(key: key);
-  const VendorAcceptedOrdersPage({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +14,8 @@ class VendorAcceptedOrdersPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Accepted Orders', style: TextStyle(color: Colors.white)),
+        title: const Text('Accepted Orders',
+            style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.green,
         elevation: 0,
       ),
@@ -49,7 +48,9 @@ class VendorAcceptedOrdersPage extends StatelessWidget {
                   children: [
                     Icon(Icons.inbox, size: 80, color: Colors.grey[400]),
                     const SizedBox(height: 16),
-                    Text('No accepted orders yet :)', style: TextStyle(fontSize: 18, color: Colors.grey[600])),
+                    Text('No accepted orders yet :)',
+                        style:
+                            TextStyle(fontSize: 18, color: Colors.grey[600])),
                   ],
                 ),
               );
@@ -58,14 +59,17 @@ class VendorAcceptedOrdersPage extends StatelessWidget {
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-                final order = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                final order =
+                    snapshot.data!.docs[index].data() as Map<String, dynamic>;
                 final orderId = snapshot.data!.docs[index].id;
                 final orderDate = (order['orderDate'] as Timestamp).toDate();
 
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   elevation: 4,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   child: InkWell(
                     onTap: () => _showOrderDetails(context, order),
                     child: Padding(
@@ -78,7 +82,8 @@ class VendorAcceptedOrdersPage extends StatelessWidget {
                             children: [
                               Text(
                                 'Order #${orderId.substring(0, 8).toUpperCase()}',
-                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18),
                               ),
                               _buildStatusChip(order['status'] ?? false),
                             ],
@@ -91,12 +96,15 @@ class VendorAcceptedOrdersPage extends StatelessWidget {
                           const SizedBox(height: 12),
                           Text(
                             order['productName'] ?? 'Unknown Product',
-                            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 16),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Total: GHC ${order["totalAmount"]}',
-                            style: TextStyle(color: Colors.green[700], fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                color: Colors.green[700],
+                                fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 8),
                           Row(
@@ -104,12 +112,20 @@ class VendorAcceptedOrdersPage extends StatelessWidget {
                             children: [
                               Text('Quantity: ${order["quantity"]}'),
                               ElevatedButton.icon(
-                                onPressed: () => _showOrderDetails(context, order),
-                                icon: const Icon(Icons.visibility, color: Colors.white,),
-                                label: const Text('View Details', style: TextStyle(color: Colors.white),),
+                                onPressed: () =>
+                                    _showOrderDetails(context, order),
+                                icon: const Icon(
+                                  Icons.visibility,
+                                  color: Colors.white,
+                                ),
+                                label: const Text(
+                                  'View Details',
+                                  style: TextStyle(color: Colors.white),
+                                ),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.blue,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20)),
                                 ),
                               ),
                             ],
@@ -154,27 +170,32 @@ class VendorAcceptedOrdersPage extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.all(20),
           child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text("Order Details", style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
-                  const Divider(),
-                  _buildDetailRow('Product', order["productName"]),
-                  _buildDetailRow('Total Amount', 'GHC ${order["totalAmount"]}'),
-                  _buildDetailRow('Quantity', '${order["quantity"]}'),
-                  _buildDetailRow('Customer', order['userName']),
-                  _buildDetailRow('Location', order['location']),
-                  _buildDetailRow('Phone', order['phone']),
-                  _buildDetailRow('Email', order['email']),
-                  _buildDetailRow('Status', order['status'] ? 'Completed' : 'In Progress'),
-                  const SizedBox(height: 16),
-                  const Text('Products:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  const SizedBox(height: 8),
-                  ..._buildProductList(order['products'] as List<dynamic>? ?? []),
-                ],
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text("Order Details",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                const Divider(),
+                _buildDetailRow('Product', order["productName"]),
+                _buildDetailRow('Total Amount', 'GHC ${order["totalAmount"]}'),
+                _buildDetailRow('Quantity', '${order["quantity"]}'),
+                _buildDetailRow('Customer', order['userName']),
+                _buildDetailRow('Location', order['location']),
+                _buildDetailRow('Phone', order['phone']),
+                _buildDetailRow('Email', order['email']),
+                _buildDetailRow(
+                    'Status', order['status'] ? 'Completed' : 'In Progress'),
+                const SizedBox(height: 16),
+                const Text('Products:',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                const SizedBox(height: 8),
+                ..._buildProductList(order['products'] as List<dynamic>? ?? []),
+              ],
             ),
+          ),
         );
       },
     );
@@ -188,7 +209,8 @@ class VendorAcceptedOrdersPage extends StatelessWidget {
         children: [
           SizedBox(
             width: 100,
-            child: Text('$label:', style: const TextStyle(fontWeight: FontWeight.bold)),
+            child: Text('$label:',
+                style: const TextStyle(fontWeight: FontWeight.bold)),
           ),
           Expanded(child: Text(value)),
         ],
@@ -208,7 +230,8 @@ class VendorAcceptedOrdersPage extends StatelessWidget {
               width: 60,
               height: 60,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => const Icon(Icons.error),
+              errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.error),
             ),
           ),
           title: Text(
@@ -218,7 +241,8 @@ class VendorAcceptedOrdersPage extends StatelessWidget {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Price: GHC ${(product['price'] as num?)?.toStringAsFixed(2) ?? 'N/A'}'),
+              Text(
+                  'Price: GHC ${(product['price'] as num?)?.toStringAsFixed(2) ?? 'N/A'}'),
               Text('Quantity: ${product['quantity'] ?? 'N/A'}'),
             ],
           ),

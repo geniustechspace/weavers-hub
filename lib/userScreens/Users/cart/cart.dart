@@ -1,5 +1,5 @@
 import 'package:firebase_cloud_firestore/firebase_cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class CartItem {
   final QueryDocumentSnapshot product;
@@ -16,8 +16,7 @@ class Cart extends ChangeNotifier {
 
   int get itemCount => _items.length;
 
-  void updateItemQuantity(QueryDocumentSnapshot product, int newQuantity)
-    final existingIndex = _items.indexWhere((item) => item.product.id == product.id);
+  void updateItemQuantity(QueryDocumentSnapshot product, int newQuantity) {
     final existingIndex =
         _items.indexWhere((item) => item.product.id == product.id);
 
@@ -35,20 +34,13 @@ class Cart extends ChangeNotifier {
 
   int getItemQuantity(QueryDocumentSnapshot product) {
     final existingItem = _items.firstWhere(
-
-          (item) => item.product.id == product.id,
-
       (item) => item.product.id == product.id,
-
       orElse: () => CartItem(product: product, quantity: 1),
     );
     return existingItem.quantity;
   }
 
   bool removeItem(String productId) {
-
-    final existingIndex = _items.indexWhere((item) => item.product.id == productId);
-
     final existingIndex =
         _items.indexWhere((item) => item.product.id == productId);
 
@@ -77,9 +69,6 @@ class Cart extends ChangeNotifier {
   }
 
   void resetProductQuantity(String productId) {
-
-    final existingIndex = _items.indexWhere((item) => item.product.id == productId);
-
     final existingIndex =
         _items.indexWhere((item) => item.product.id == productId);
     if (existingIndex >= 0) {

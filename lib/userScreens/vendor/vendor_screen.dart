@@ -5,10 +5,8 @@ import 'package:get/get.dart';
 import 'package:weavershub/userScreens/vendor/product_creation.dart';
 import 'package:weavershub/userScreens/vendor/vendor_products_page.dart';
 
-
 import '../../DashBoard/vendor/vendor_orders_page.dart';
 import '../../DashBoard/vendor/view_accepted_orders.dart';
-import '../../services/notification_service.dart';
 
 class VendorDashboard extends StatelessWidget {
   const VendorDashboard({super.key});
@@ -37,8 +35,6 @@ class VendorDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    final notificationService = NotificationService();
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -55,10 +51,13 @@ class VendorDashboard extends StatelessWidget {
               future: fetchVendorStats(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator(color: Colors.white));
+                  return const Center(
+                      child: CircularProgressIndicator(color: Colors.white));
                 }
                 if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}', style: const TextStyle(color: Colors.white)));
+                  return Center(
+                      child: Text('Error: ${snapshot.error}',
+                          style: const TextStyle(color: Colors.white)));
                 }
 
                 final stats = snapshot.data!;
@@ -74,34 +73,27 @@ class VendorDashboard extends StatelessWidget {
                           const SizedBox(height: 30),
                           _buildSectionTitle("Products"),
                           const SizedBox(height: 10),
-                          _buildActionButton('Create a new product', Icons.add, () {
+                          _buildActionButton('Create a new product', Icons.add,
+                              () {
                             Get.to(() => const VendorProductCreation());
                           }),
                           const SizedBox(height: 16),
-                          _buildActionButton('View all products', Icons.visibility, () {
+                          _buildActionButton(
+                              'View all products', Icons.visibility, () {
                             Get.to(() => const UserProductsPage());
                           }),
                           const SizedBox(height: 30),
                           _buildSectionTitle("Orders"),
                           const SizedBox(height: 10),
-                          _buildActionButton('View all orders', Icons.shopping_cart, () {
+                          _buildActionButton(
+                              'View all orders', Icons.shopping_cart, () {
                             Get.to(() => const VendorOrdersPage());
                           }),
                           const SizedBox(height: 16),
-                          _buildActionButton('Attended orders', Icons.check_circle, () {
+                          _buildActionButton(
+                              'Attended orders', Icons.check_circle, () {
                             Get.to(() => const VendorAcceptedOrdersPage());
                           }),
-
-                          // SizedBox(height: 20,),
-                          // _buildActionButton('Attended orders', Icons.check_circle, () async {
-                          //   // final user = FirebaseAuth.instance.currentUser;
-                          //     // await notificationService.sendNotification(
-                          //     //   receiverUserId: user!.uid,
-                          //     //   title: 'New Message',
-                          //     //   body: 'You have a new message!',
-                          //     // );
-                          //
-                          // }),
                         ],
                       ),
                     ),
@@ -122,7 +114,7 @@ class VendorDashboard extends StatelessWidget {
         color: Colors.white.withOpacity(0.2),
         borderRadius: BorderRadius.circular(16),
       ),
-      child:  Center(
+      child: Center(
         child: Text(
           name,
           style: const TextStyle(
@@ -138,9 +130,13 @@ class VendorDashboard extends StatelessWidget {
   Widget _buildStatCards(Map<String, int> stats) {
     return Row(
       children: [
-        Expanded(child: _buildStatCard('Products Created', '${stats['productsCreated']}', Icons.inventory)),
+        Expanded(
+            child: _buildStatCard('Products Created',
+                '${stats['productsCreated']}', Icons.inventory)),
         const SizedBox(width: 16),
-        Expanded(child: _buildStatCard('Orders Received', '${stats['ordersReceived']}', Icons.shopping_bag)),
+        Expanded(
+            child: _buildStatCard('Orders Received',
+                '${stats['ordersReceived']}', Icons.shopping_bag)),
       ],
     );
   }
@@ -171,7 +167,8 @@ class VendorDashboard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
+            style: const TextStyle(
+                fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
           ),
         ],
       ),
@@ -205,7 +202,9 @@ class VendorDashboard extends StatelessWidget {
         children: [
           Icon(icon, color: Colors.green),
           const SizedBox(width: 8),
-          Text(text, style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+          Text(text,
+              style: const TextStyle(
+                  color: Colors.green, fontWeight: FontWeight.bold)),
         ],
       ),
     );

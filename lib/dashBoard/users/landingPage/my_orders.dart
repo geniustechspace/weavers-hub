@@ -5,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:intl/intl.dart';
 
+import '../../../services/notification_service.dart';
+
 
 class MyOrders extends StatefulWidget {
   const MyOrders({super.key});
@@ -14,14 +16,9 @@ class MyOrders extends StatefulWidget {
 }
 
 class _MyOrdersState extends State<MyOrders> {
-  // bool _isEnabled = true;
 
   @override
 
-class MyOrders extends StatelessWidget {
-  const MyOrders({super.key});
-
-  @override
 
   Widget build(BuildContext context) {
     final User? currentUser = FirebaseAuth.instance.currentUser;
@@ -34,8 +31,6 @@ class MyOrders extends StatelessWidget {
           'My Orders',
           style: TextStyle(color: Colors.white),
         ),
-
-        title: const Text('My Orders', style: TextStyle(color: Colors.white),),
 
         elevation: 0,
         backgroundColor: Colors.green,
@@ -70,13 +65,13 @@ class MyOrders extends StatelessWidget {
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
-
+                final orderDoc = snapshot.data!.docs[index];
                 final orderData =
-                    snapshot.data!.docs[index].data() as Map<String, dynamic>;
+                    orderDoc.data() as Map<String, dynamic>;
 
-                final orderData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
                 final totalAmount = orderData['totalAmount'] as double;
                 final itemsCount = orderData['itemsCount'] as int;
+
 
                 Timestamp timestamp = orderData['orderDate'] as Timestamp;
                 DateTime dateTime = timestamp.toDate();
@@ -88,11 +83,11 @@ class MyOrders extends StatelessWidget {
                     snapshot.data!.docs[index].id.substring(0, 5).toUpperCase();
 
                 return Card(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   elevation: 4,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: InkWell(
                     onTap: () => _showOrderDetails(context, orderData),
                     child: Padding(
@@ -100,27 +95,51 @@ class MyOrders extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Order ID and Status Row
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
                                 'Order #$orderId',
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                  color: Colors.black87,
+                                ),
                               ),
                               _buildStatusChip(orderData['status']),
                             ],
                           ),
                           const SizedBox(height: 8),
-                          Text(
-                            'Placed $timeAgo',
-                            style: TextStyle(color: Colors.grey[600]),
+
+                          // Time and Date Info
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.access_time,
+                                color: Colors.grey[600],
+                                size: 16,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Placed $timeAgo',
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
                           Text(
                             formattedDate,
-                            style: TextStyle(color: Colors.grey[600]),
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 14,
+                            ),
                           ),
                           const SizedBox(height: 12),
+
+                          // Total Amount
                           Text(
                             'GHC ${totalAmount.toStringAsFixed(2)}',
                             style: TextStyle(
@@ -129,24 +148,55 @@ class MyOrders extends StatelessWidget {
                               fontSize: 16,
                             ),
                           ),
+                          const SizedBox(height: 12),
+
+                          // Items Count, Checkbox, and Delivery Status Row
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                  '$itemsCount ${itemsCount == 1 ? 'item' : 'items'}'),
                               Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  _buildAcceptanceStatusChip(
-                                      orderData['acceptOrder'] ?? true),
-                                  Row(
-                                    children: [
-                                      const Text(
-                                        "Has item been delivered?",
-                                        style: TextStyle(fontSize: 10),
-                                      ),
-                                      productDeliveredChip(orderData['isDelivered'], updateOrderStatus, snapshot.data!.docs[index].id)
-                                    ],
+                                  Text(
+                                    '$itemsCount ${itemsCount == 1 ? 'item' : 'items'}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black87,
+                                    ),
                                   ),
+                                  if(!orderData['acceptOrder'])
+                                  Card(
+                                    margin: const EdgeInsets.only(top: 8),
+                                    elevation: 2,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4),
+                                      child: Checkbox(
+                                        activeColor: Colors.green,
+                                        value: orderData['isDelivered'] ?? false,
+                                        onChanged: (bool? value) {
+                                          _updateOrderStatus(
+                                            context,
+                                            orderDoc.reference,
+                                            value ?? false,
+                                            orderData['userId'],
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+
+
+                                ],
+                              ),
+
+                              // Delivery Status
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  _buildAcceptanceStatusChip(orderData['acceptOrder'] ?? false),
                                 ],
                               ),
                             ],
@@ -159,6 +209,85 @@ class MyOrders extends StatelessWidget {
               },
             );
           },
+        ),
+      ),
+    );
+  }
+
+  void _updateOrderStatus(
+      BuildContext context, // add context parameter here
+      DocumentReference orderRef, bool accepted, String receiverId) {
+
+    final notificationService = NotificationService();
+    final user = FirebaseAuth.instance.currentUser;
+
+    orderRef.update({'acceptOrder': accepted}).then((_) async {
+      String orderId = orderRef.id;
+
+      // Retrieve order data
+      DocumentSnapshot orderSnapshot = await orderRef.get();
+      Map<String, dynamic> orderData = orderSnapshot.data() as Map<String, dynamic>;
+      String buyerId = orderData['userId'];
+
+      await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(orderId)
+          .update({'acceptOrder': accepted});
+
+      // Querying and updating collectionGroup
+      FirebaseFirestore.instance
+          .collectionGroup('sellerOrders')
+          .where('userId', isEqualTo: user?.uid)
+          .get()
+          .then((querySnapshot) {
+        for (var doc in querySnapshot.docs) {
+          doc.reference.update({'acceptOrder': accepted});
+        }
+      });
+
+      // Notify the user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(accepted ? "You've confirm that your order has been received": ' '),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+
+      // Send notification to the buyer
+      await notificationService.sendNotification(
+        receiverUserId: buyerId,
+        title: accepted ? 'Order Accepted' : 'Order Updated',
+        body: accepted
+            ? 'Your order #$orderId has been accepted by the vendor!'
+            : 'Your order #$orderId has been updated.',
+      );
+    }).catchError((error) {
+
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to update order status: $error'),
+          duration: const Duration(seconds: 50),
+        ),
+      );
+
+    });
+  }
+
+
+
+  Widget _buildStatusChip(bool status) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: status ? Colors.green[100] : Colors.orange[100],
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        status ? 'Completed' : 'Pending',
+        style: TextStyle(
+          color: status ? Colors.green[700] : Colors.orange[700],
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -198,112 +327,6 @@ class MyOrders extends StatelessWidget {
     // You might want to show a success message or update other parts of your UI here
   }
 
-// Usage example
-// productDeliveredChip(orderData['isDelivered'], updateOrderStatus, orderId)
-  // Widget _productDeliveredChip(bool isEnabled, Function updateOrderStatus) {
-  //   return ElevatedButton(
-  //     onPressed:  () {
-  //             setState(() {
-  //               isEnabled = false;
-  //
-  //             });
-  //             // Call the function to update order status
-  //             updateOrderStatus(orderId,orderData['isDelivered']);
-  //           }
-  //         ,
-  //     style: ElevatedButton.styleFrom(
-  //       foregroundColor: Colors.white,
-  //       backgroundColor: isEnabled ? Colors.green[700] : Colors.grey,
-  //       minimumSize: const Size(25, 25),
-  //       padding: const EdgeInsets.all(0),
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(5),
-  //       ),
-  //     ),
-  //     child: Icon(
-  //       isEnabled ? Icons.check_box_outline_blank : Icons.check_box,
-  //       size: 15,
-  //     ),
-  //   );
-  // }
-  //
-  // void _updateOrderStatus(String orderId, bool isDelivered) async {
-  //   // Update the database
-  //   await FirebaseFirestore.instance
-  //       .collection('orders')
-  //       .doc(orderId)
-  //       .update({'isDelivered': isDelivered});
-  //
-  //   // You might want to show a success message or update other parts of your UI here
-  // }
-
-                final orderId = snapshot.data!.docs[index].id.substring(0, 5).toUpperCase();
-
-                 return Card(
-                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    child: InkWell(
-                      onTap: () => _showOrderDetails(context, orderData),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  'Order #$orderId',
-                                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                                ),
-                                _buildStatusChip(orderData['status']),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Placed $timeAgo',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                            Text(
-                              formattedDate,
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'GHC ${totalAmount.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                color: Colors.green[700],
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('$itemsCount ${itemsCount == 1 ? 'item' : 'items'}'),
-                                Column(
-                                  children: [
-                                    _buildAcceptanceStatusChip(orderData['acceptOrder'] ?? false),
-                                  ],
-                                ),
-
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-              },
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-
   Widget _buildAcceptanceStatusChip(bool accepted) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -333,23 +356,6 @@ class MyOrders extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildStatusChip(bool status) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: status ? Colors.green[100] : Colors.orange[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        status ? 'Completed' : 'Pending',
-        style: TextStyle(
-          color: status ? Colors.green[700] : Colors.orange[700],
-          fontWeight: FontWeight.bold,
-        ),
       ),
     );
   }
@@ -400,34 +406,6 @@ class MyOrders extends StatelessWidget {
             ),
           ),
         );
-        return  Container(
-          padding: const EdgeInsets.all(20),
-          child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text("Order Details", style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
-                  const Divider(),
-                  _buildDetailRow('Date', '$formattedDate ($timeAgo)'),
-                  _buildDetailRow('Total Amount', 'GHC ${orderData['totalAmount']}'),
-                  _buildDetailRow('Delivery Charge', 'GHC ${orderData['deliveryCharge']}'),
-                  _buildDetailRow('Items Count', '${orderData['itemsCount']}'),
-                  _buildDetailRow('Customer', orderData['userName']),
-                  _buildDetailRow('Location', orderData['location']),
-                  _buildDetailRow('Phone', orderData['phone']),
-                  _buildDetailRow('Email', orderData['email']),
-                  _buildDetailRow('Status', orderData['status'] ? 'Completed' : 'Pending'),
-                  const SizedBox(height: 16),
-                  const Text('Products:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  const SizedBox(height: 8),
-                  ..._buildProductList(orderData['products']),
-                ],
-              ),
-            ),
-        );
-
-
       },
     );
   }
@@ -464,8 +442,6 @@ class MyOrders extends StatelessWidget {
                 placeholder: (context, url) =>
                     const CircularProgressIndicator(),
 
-                placeholder: (context, url) => const CircularProgressIndicator(),
-
                 errorWidget: (context, url, error) => const Icon(Icons.error)),
           ),
           title: Text(
@@ -484,3 +460,4 @@ class MyOrders extends StatelessWidget {
     }).toList();
   }
 
+}

@@ -16,9 +16,11 @@ class PaymentService {
     required Function(String) onSuccess,
     required VoidCallback onFailure,
   }) async {
-
     final uniqueTransRef = PayWithPayStack().generateUuidV4();
-    await FirebaseFirestore.instance.collection('orders').doc(uniqueTransRef).set({
+    await FirebaseFirestore.instance
+        .collection('orders')
+        .doc(uniqueTransRef)
+        .set({
       'status': 'pending',
       'createdAt': FieldValue.serverTimestamp(),
       'userId': FirebaseAuth.instance.currentUser?.uid,
@@ -49,7 +51,8 @@ class PaymentService {
     final response = await http.get(
       Uri.parse("https://api.paystack.co/transaction/verify/$reference"),
       headers: {
-        'Authorization': 'Bearer sk_test_fc20a32819750f37fbf5177e193a76455bdecca2',
+        'Authorization':
+            'Bearer sk_test_fc20a32819750f37fbf5177e193a76455bdecca2',
       },
     );
 

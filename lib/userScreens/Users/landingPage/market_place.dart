@@ -7,7 +7,6 @@ import 'package:weavershub/userScreens/Users/landingPage/product_details.dart';
 import '../cart/cart.dart';
 import '../cart/cart_screen.dart';
 
-
 class MarketPlace extends StatelessWidget {
   const MarketPlace({super.key});
 
@@ -18,18 +17,26 @@ class MarketPlace extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.green,
         automaticallyImplyLeading: false,
-        title: const Text('Market Place', style: TextStyle(color: Colors.white),),
+        title: const Text(
+          'Market Place',
+          style: TextStyle(color: Colors.white),
+        ),
         actions: [
           Consumer<Cart>(
             builder: (context, cart, child) {
               return Stack(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.shopping_cart, size: 35, color: Colors.white,),
+                    icon: const Icon(
+                      Icons.shopping_cart,
+                      size: 35,
+                      color: Colors.white,
+                    ),
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const CartScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => const CartScreen()),
                       );
                     },
                   ),
@@ -164,14 +171,16 @@ class _ProductCardState extends State<ProductCard> {
         children: [
           Expanded(
             child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(15)),
               child: Hero(
                 tag: 'product-${widget.product.id}',
                 child: CachedNetworkImage(
                   imageUrl: widget.product['image_url'],
                   fit: BoxFit.cover,
                   width: double.infinity,
-                  placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                  placeholder: (context, url) =>
+                      const Center(child: CircularProgressIndicator()),
                   errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
               ),
@@ -199,7 +208,10 @@ class _ProductCardState extends State<ProductCard> {
                     backgroundColor: Colors.green,
                     minimumSize: const Size(double.infinity, 36),
                   ),
-                  child: const Text('Buy', style: TextStyle(color: Colors.white),),
+                  child: const Text(
+                    'Buy',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ],
             ),
@@ -243,7 +255,8 @@ class _ProductCardState extends State<ProductCard> {
                       },
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 15, vertical: 8),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
@@ -251,7 +264,8 @@ class _ProductCardState extends State<ProductCard> {
                       ),
                       child: Text(
                         '$_quantity',
-                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
                     IconButton(
@@ -274,8 +288,6 @@ class _ProductCardState extends State<ProductCard> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-
-
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -284,7 +296,7 @@ class _ProductCardState extends State<ProductCard> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              onPressed:  (){
+              onPressed: () {
                 Navigator.of(context).pop();
                 _addToCart();
               },
@@ -295,8 +307,4 @@ class _ProductCardState extends State<ProductCard> {
       },
     );
   }
-
-
-
-
 }

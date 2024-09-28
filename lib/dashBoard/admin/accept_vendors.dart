@@ -37,17 +37,17 @@ class _AcceptVendorsState extends State<AcceptVendors> {
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-
     final notificationService = NotificationService();
 
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Accept Vendors',style: TextStyle(color: Colors.white),),
+        title: const Text(
+          'Accept Vendors',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Colors.green,
       ),
       body: Container(
@@ -71,7 +71,10 @@ class _AcceptVendorsState extends State<AcceptVendors> {
               return const Center(
                 child: Text(
                   'No vendors awaiting approval.',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey),
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey),
                 ),
               );
             }
@@ -88,7 +91,8 @@ class _AcceptVendorsState extends State<AcceptVendors> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: InkWell(
-                    onTap: () =>  _showVendorInfo(context, vendor.data() as Map<String, dynamic>),
+                    onTap: () => _showVendorInfo(
+                        context, vendor.data() as Map<String, dynamic>),
                     child: Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
@@ -118,12 +122,12 @@ class _AcceptVendorsState extends State<AcceptVendors> {
                                 label: const Text('Approve'),
                                 // onPressed: () =>
                                 onPressed: () async {
-                  _approveVendor(vendor.id);
-                  await notificationService.sendNotification(
-                    receiverUserId: vendor.id,
-                    title: 'New Message from your admin',
-                    body: 'your account has been approved',
-                  );
+                                  _approveVendor(vendor.id);
+                                  await notificationService.sendNotification(
+                                    receiverUserId: vendor.id,
+                                    title: 'New Message from your admin',
+                                    body: 'your account has been approved',
+                                  );
                                 },
 
                                 style: ElevatedButton.styleFrom(
@@ -156,27 +160,28 @@ class _AcceptVendorsState extends State<AcceptVendors> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (BuildContext context) {
-
-        return  Container(
+        return Container(
           padding: const EdgeInsets.all(20),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text("Vendor Info", style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
+                const Text("Vendor Info",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                 const Divider(),
                 _buildDetailRow('Name', vendorInfo['name']),
                 _buildDetailRow('Email', vendorInfo['email']),
                 _buildDetailRow('Location', vendorInfo['location']),
                 _buildDetailRow('Phone', vendorInfo['phone']),
-                _buildDetailRow('Status', vendorInfo['isVendor'] == true ? 'waiting' : 'approved'),
+                _buildDetailRow('Status',
+                    vendorInfo['isVendor'] == true ? 'waiting' : 'approved'),
                 const SizedBox(height: 16),
               ],
             ),
           ),
         );
-
       },
     );
   }

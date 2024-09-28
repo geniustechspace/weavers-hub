@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:weavershub/DashBoard/admin/accept_vendors.dart';
 
+import 'admin_orders_page.dart';
+
 class AdminDashBoard extends StatefulWidget {
   const AdminDashBoard({super.key});
 
@@ -86,7 +88,8 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
             }
             return Text(
               "Welcome, ${snapshot.data}",
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, color: Colors.white),
             );
           },
         ),
@@ -116,11 +119,37 @@ class _AdminDashBoardState extends State<AdminDashBoard> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Get.to(const AcceptVendors()),
-        label: const Text("Accept Vendors", style: TextStyle(color: Colors.white),),
-        icon: const Icon(Icons.person_add, color: Colors.white,),
-        backgroundColor: const Color(0xFF37B943),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton.extended(
+            onPressed: () => Get.to(const AdminOrdersPage()),
+            label: const Text(
+              "All Orders",
+              style: TextStyle(color: Colors.white),
+            ),
+            icon: const Icon(
+              Icons.shopping_cart,
+              color: Colors.white,
+            ),
+            backgroundColor: const Color(0xFF37B943),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          FloatingActionButton.extended(
+            onPressed: () => Get.to(const AcceptVendors()),
+            label: const Text(
+              "Accept Vendors",
+              style: TextStyle(color: Colors.white),
+            ),
+            icon: const Icon(
+              Icons.person_add,
+              color: Colors.white,
+            ),
+            backgroundColor: const Color(0xFF37B943),
+          ),
+        ],
       ),
     );
   }
@@ -305,7 +334,6 @@ class VendorDetailsBottomSheet extends StatelessWidget {
         .collectionGroup('sellerOrders')
         .where('userId', isEqualTo: vendorId)
         .where('acceptOrder', isEqualTo: true)
-        // .where('acceptOrder', isEqualTo: 'attended')  // Assuming 'attended' is the status for attended orders
         .get();
 
     return {
@@ -315,28 +343,22 @@ class VendorDetailsBottomSheet extends StatelessWidget {
     };
   }
 
-
   Future<void> _denialVendor(BuildContext context, String vendorId) async {
     try {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(vendorId)
           .update({
-
         'isVendorApproved': false,
       });
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
-        const SnackBar(
-            content: Text(
-                'Vendor Blacklisted')),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vendor Blacklisted')),
       );
     } catch (e) {
       print('Failed to update vendor: $e');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -363,18 +385,25 @@ class VendorDetailsBottomSheet extends StatelessWidget {
 
               return Column(
                 children: [
-                  _buildStatCard('Products Created', '${stats['productsCreated']}', Icons.inventory),
+                  _buildStatCard('Products Created',
+                      '${stats['productsCreated']}', Icons.inventory),
                   const SizedBox(height: 10),
-                  _buildStatCard('Orders Received', '${stats['ordersReceived']}', Icons.shopping_bag),
+                  _buildStatCard('Orders Received',
+                      '${stats['ordersReceived']}', Icons.shopping_bag),
                   const SizedBox(height: 10),
-                  _buildStatCard('Orders Attended', '${stats['ordersAttended']}', Icons.check_circle),
-                  const SizedBox(height: 15,),
+                  _buildStatCard('Orders Attended',
+                      '${stats['ordersAttended']}', Icons.check_circle),
+                  const SizedBox(
+                    height: 15,
+                  ),
                   OutlinedButton.icon(
-                    icon: const Icon(Icons.stop_circle_outlined, color: Colors.red),
+                    icon: const Icon(Icons.stop_circle_outlined,
+                        color: Colors.red),
                     label: const Text('Blacklist vendor'),
                     onPressed: () => _denialVendor(context, vendorId),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.red, side: const BorderSide(color: Colors.red),
+                      foregroundColor: Colors.red,
+                      side: const BorderSide(color: Colors.red),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -401,9 +430,12 @@ class VendorDetailsBottomSheet extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontSize: 16, color: Colors.grey)),
+                Text(title,
+                    style: const TextStyle(fontSize: 16, color: Colors.grey)),
                 const SizedBox(height: 4),
-                Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Text(value,
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold)),
               ],
             ),
           ],

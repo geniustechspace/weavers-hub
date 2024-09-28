@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import '../widgets/buttons.dart';
 import '../auth/login.dart';
 
-
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
@@ -11,8 +10,10 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size.width;
     return Scaffold(
-      bottomNavigationBar: const Text( textAlign: TextAlign.center,"By: Weavers HUB LTD."
-      ,style: TextStyle(fontWeight: FontWeight.w300, fontSize: 15)),
+      bottomNavigationBar: const Text(
+          textAlign: TextAlign.center,
+          "By: Weavers HUB LTD.",
+          style: TextStyle(fontWeight: FontWeight.w300, fontSize: 15)),
       backgroundColor: const Color(0xFFEEEEEE),
       body: SingleChildScrollView(
         child: Column(
@@ -23,25 +24,26 @@ class SplashScreen extends StatelessWidget {
             ),
             const Center(
               child: Text(
-                'Weavers HUB',style: TextStyle(fontWeight: FontWeight.w900, fontSize: 30),
-                // style: AppStyle.headerText,
+                'Weavers HUB',
+                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 30),
               ),
             ),
-            SizedBox(height: size*0.01),
+            SizedBox(height: size * 0.01),
             const Center(
               child: Image(
                 image: AssetImage('assets/lady_next_to_phone.png'),
               ),
             ),
             SizedBox(
-              height: size*0.1,
+              height: size * 0.1,
             ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 textAlign: TextAlign.center,
-                'e-commerce mobile application for locally handwoven smock, kente and baskets'
-              ,style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
+                'E-commerce mobile application for locally handwoven smock, kente and baskets',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+              ),
             ),
             const SizedBox(
               height: 20,
@@ -58,11 +60,11 @@ class SplashScreen extends StatelessWidget {
             ),
             Center(
                 child: CustomButton(
-                  buttonName: 'Get Started',
-                  onTap: () {
-                    Get.to(const SignInScreen());
-                  },
-                )),
+              buttonName: 'Get Started',
+              onTap: () {
+                Get.to(const SignInScreen());
+              },
+            )),
           ],
         ),
       ),

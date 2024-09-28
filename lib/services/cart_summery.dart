@@ -1,5 +1,3 @@
-
-
 class CartSummary {
   final int itemCount;
   final double totalAmount;
@@ -9,4 +7,3 @@ class CartSummary {
   CartSummary({required this.itemCount, required this.totalAmount})
       : amountToPay = totalAmount + deliveryCharge;
 }
-

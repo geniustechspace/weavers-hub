@@ -5,8 +5,11 @@ class FooterButton extends StatelessWidget {
   final String buttonText;
   final VoidCallback onTap;
 
-
-  const FooterButton({super.key, required this.question, required this.buttonText, required this.onTap});
+  const FooterButton(
+      {super.key,
+      required this.question,
+      required this.buttonText,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +17,10 @@ class FooterButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(question),
-        CustomTextButton(buttonName: buttonText,  onTap: onTap,)
+        CustomTextButton(
+          buttonName: buttonText,
+          onTap: onTap,
+        )
       ],
     );
   }
@@ -25,8 +31,8 @@ class CustomTextButton extends StatelessWidget {
 
   final VoidCallback onTap;
 
-
-  const CustomTextButton({super.key,required this.buttonName, required this.onTap});
+  const CustomTextButton(
+      {super.key, required this.buttonName, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

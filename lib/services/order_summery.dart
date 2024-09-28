@@ -3,16 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../userScreens/Users/cart/cart.dart';
 
-
-
-
-
-
-
-import '../userScreens/Users/cart/cart.dart';
-
-
-
 class OrderSummaryItem extends StatelessWidget {
   final CartItem item;
 
@@ -32,7 +22,8 @@ class OrderSummaryItem extends StatelessWidget {
                 width: 50,
                 height: 50,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => const CircularProgressIndicator(),
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
                 errorWidget: (context, url, error) => const Icon(Icons.error)),
           ),
           const SizedBox(width: 10),
@@ -40,7 +31,8 @@ class OrderSummaryItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.product['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(item.product['name'],
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
                 Text('Quantity: ${item.quantity}'),
                 Text('Price: GHC ${item.product['price'] * item.quantity}'),
               ],

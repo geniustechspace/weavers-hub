@@ -3,7 +3,6 @@ import 'package:firebase_cloud_firestore/firebase_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:weavershub/auth/signup.dart';
-
 import '../DashBoard/admin/admin_dash_board.dart';
 import '../userScreens/Users/landingPage/landing_page.dart';
 import '../userScreens/vendor/vendor_screen.dart';
