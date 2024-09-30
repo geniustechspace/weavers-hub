@@ -10,6 +10,7 @@ import '../widgets/buttons.dart';
 import '../widgets/custom_text_feild.dart';
 import '../widgets/custom_loader.dart';
 import '../widgets/footer_button.dart';
+import 'firebase_auth.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -23,6 +24,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+  final AuthService _authService = AuthService();
 
   bool isLoading = false;
 
@@ -106,40 +108,44 @@ class _SignInScreenState extends State<SignInScreen> {
                           });
 
                           try {
-                            // Attempt to log in the user
-                            UserCredential userCredential = await FirebaseAuth
-                                .instance
-                                .signInWithEmailAndPassword(
-                              email: email.text,
-                              password: password.text,
+                            _authService.handleLogin(
+                              email.text,
+                              password.text,
                             );
+                            // Attempt to log in the user
+                            // UserCredential userCredential = await FirebaseAuth
+                            //     .instance
+                            //     .signInWithEmailAndPassword(
+                            //   email: email.text,
+                            //   password: password.text,
+                            // );
 
                             // Retrieve user document from Firestore
-                            DocumentSnapshot userDoc = await FirebaseFirestore
-                                .instance
-                                .collection('users')
-                                .doc(userCredential.user?.uid)
-                                .get();
+                            // DocumentSnapshot userDoc = await FirebaseFirestore
+                            //     .instance
+                            //     .collection('users')
+                            //     .doc(userCredential.user?.uid)
+                            //     .get();
 
-                            if (userDoc.exists) {
-                              bool isAdmin = userDoc['isAdmin'];
-
-                              // vendor = true and isApprove is false ==> users page
-                              // vendor = true and isApprove is true ==> vendors page
-                              // vendor = false and isApprove is true or false ==> users page
-
-                              if (isAdmin) {
-                                Get.to(() => const AdminDashBoard());
-                              } else {
-                                bool isVendor = userDoc['isVendor'];
-                                bool isVendorApproved = userDoc['isVendorApproved'];
-                                if (isVendor && isVendorApproved) {
-                                  Get.to(() =>  const VendorDashboard());
-                                } else {
-                                  Get.to(() =>  const NavigationHome());
-                                }
-                              }
-                            }
+                            // if (userDoc.exists) {
+                            //   bool isAdmin = userDoc['isAdmin'];
+                            //
+                            //   // vendor = true and isApprove is false ==> users page
+                            //   // vendor = true and isApprove is true ==> vendors page
+                            //   // vendor = false and isApprove is true or false ==> users page
+                            //
+                            //   if (isAdmin) {
+                            //     Get.to(() => const AdminDashBoard());
+                            //   } else {
+                            //     bool isVendor = userDoc['isVendor'];
+                            //     bool isVendorApproved = userDoc['isVendorApproved'];
+                            //     if (isVendor && isVendorApproved) {
+                            //       Get.to(() =>  const VendorDashboard());
+                            //     } else {
+                            //       Get.to(() =>  const NavigationHome());
+                            //     }
+                            //   }
+                            // }
                           } catch (e) {
                             // Handle errors
                             Get.snackbar('Error', 'Failed to log in: $e');
