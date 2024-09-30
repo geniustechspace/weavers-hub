@@ -1,10 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../auth/firebase_auth.dart';
 import '../widgets/buttons.dart';
 import '../auth/login.dart';
 
 class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
+   SplashScreen({super.key});
+
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+   final AuthService _authService = AuthService();
+  bool isUserLogin() {
+    User? user = _firebaseAuth.currentUser;
+    return user != null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,9 +70,11 @@ class SplashScreen extends StatelessWidget {
             Center(
                 child: CustomButton(
               buttonName: 'Get Started',
-              onTap: () {
-                Get.to(const SignInScreen());
-              },
+              onTap: () => _authService.checkLoginStatus(),
+              // isUserLogin() ? const SignInScreen() : SplashScree(),
+              // onTap: () {
+              //   Get.to(const SignInScreen());
+              // },
             )),
           ],
         ),

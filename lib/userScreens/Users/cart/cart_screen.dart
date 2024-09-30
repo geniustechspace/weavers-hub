@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -120,6 +121,35 @@ void _handleSuccessfulPayment(
   try {
     await OrderService().createOrder(cart, reference);
     cart.clear();
+    print("@@@@@@@@@@@@@@");
+    print(cart.items);
+
+    for(var item in cart.items){
+      // Assuming you have a product ID and quantity in the cart items
+      String productId = item.product.id;
+      int quantityBought = item.quantity;
+
+      print("product ID: $productId");
+      print("quantityBought: $quantityBought");
+
+      // Fetch the current product stock (from Firebase, for example)
+      // DocumentSnapshot productSnapshot = await FirebaseFirestore.instance
+      //     .collection('products')
+      //     .doc(productId)
+      //     .get();
+      // int currentStock = productSnapshot['products'];
+      // print("product snapshot: $productSnapshot");
+
+      // Deduct the bought quantity from the stock
+      // int newStock = currentStock - quantityBought;
+      // print("new stock $newStock");
+
+      // Update the product stock in the database
+      // await FirebaseFirestore.instance
+      //     .collection('products')
+      //     .doc(productId)
+      //     .update({'products': newStock});
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Order placed successfully!')),

@@ -17,6 +17,7 @@ class RegistrationScreen extends StatefulWidget {
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
+  final AuthService _authService = AuthService();
 
   TextEditingController name = TextEditingController();
   TextEditingController phone = TextEditingController();
@@ -179,7 +180,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
                           try {
 
-                             await createAccount(
+                             await _authService.createAccount(
                                  name.text,
                                  phone.text,
                                  location.text,
