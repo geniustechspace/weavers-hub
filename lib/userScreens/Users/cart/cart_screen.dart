@@ -124,7 +124,7 @@ void _handleSuccessfulPayment(
     print("@@@@@@@@@@@@@@");
     print(cart.items);
 
-    for(var item in cart.items){
+    for (var item in cart.items) {
       // Assuming you have a product ID and quantity in the cart items
       String productId = item.product.id;
       int quantityBought = item.quantity;
@@ -133,22 +133,22 @@ void _handleSuccessfulPayment(
       print("quantityBought: $quantityBought");
 
       // Fetch the current product stock (from Firebase, for example)
-      // DocumentSnapshot productSnapshot = await FirebaseFirestore.instance
-      //     .collection('products')
-      //     .doc(productId)
-      //     .get();
-      // int currentStock = productSnapshot['products'];
-      // print("product snapshot: $productSnapshot");
+      DocumentSnapshot productSnapshot = await FirebaseFirestore.instance
+          .collection('products')
+          .doc(productId)
+          .get();
+      int currentStock = productSnapshot['quantity'];
+      print("product snapshot: $productSnapshot");
 
       // Deduct the bought quantity from the stock
-      // int newStock = currentStock - quantityBought;
-      // print("new stock $newStock");
+      int newStock = currentStock - quantityBought;
+      print("new stock $newStock");
 
       // Update the product stock in the database
-      // await FirebaseFirestore.instance
-      //     .collection('products')
-      //     .doc(productId)
-      //     .update({'products': newStock});
+      await FirebaseFirestore.instance
+          .collection('products')
+          .doc(productId)
+          .update({'quantity': newStock});
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
